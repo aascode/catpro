@@ -1,8 +1,16 @@
+# config
+config.py
+
+
 # data
 catpro/data/datasets
-catpro/data/runs/
+catpro/data/outputs/
+catpro/data/util/
 
 
+
+
+*DS_Store*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

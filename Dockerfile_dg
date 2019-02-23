@@ -1,0 +1,38 @@
+#Use an official Python runtime as a parent image
+#FROM tensorflow/tensorflow:1.11.0-gpu-py3
+FROM python:3.5
+MAINTAINER dlow "dlow@mit.edu"
+
+# Set the working directory to /app
+WORKDIR /app
+
+# Copy the current directory contents into the container at /app
+ADD . /app
+
+# Install any needed packages specified in requirements.txt
+RUN pip install --trusted-host pypi.python.org -r requirements.txt && \
+	python -c "import nltk; nltk.download(['punkt', 'averaged_perceptron_tagger', 'maxent_ne_chunker', 'words'])"
+
+# Make port 80 available to the world outside this container
+EXPOSE 80
+
+# Define environment variable
+ENV NAME World
+
+# Run app.py when the container launches
+CMD ["python", "app.py"]
+
+RUN [ "python", "-c", "import nltk; nltk.download('all')" ]
+RUN python3 -m nltk.downloader -d /usr/share/nltk_data brown
+RUN python3 -m nltk.downloader -d /usr/share/nltk_data punkt
+
+RUN python3 -m nltk.downloader -d /usr/share/nltk_data treebank
+RUN python3 -m nltk.downloader -d /usr/share/nltk_data sinica_treebank
+
+RUN python3 -m nltk.downloader -d /usr/share/nltk_data maxent_treebank_pos_tagger
+
+RUN python3 -m nltk.downloader -d /usr/share/nltk_data words
+RUN python3 -m nltk.downloader -d /usr/share/nltk_data stopwords
+RUN python3 -m nltk.downloader -d /usr/share/nltk_data names
+
+RUN python3 -m nltk.downloader -d /usr/share/nltk_data wordnet

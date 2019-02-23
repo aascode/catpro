@@ -1,0 +1,14 @@
+numpy
+nltk>=3.0.0
+scipy>=0.13.3
+six
+scikit-learn
+tensorflow
+spacy
+matplotlib
+seaborn
+argparse
+pandas==0.23.0
+h5py
+pyyaml
+torch

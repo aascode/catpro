@@ -1,6 +1,6 @@
-# Predicting Depression from Speech
+# CATPro
 
-TODO Description
+Clinical Acoustics & Text Processing (CATPro) provides tools for monitoring and predicting mental health disorders using acoustic signal processing and natural language processing.
 
 ## Getting Started
 
@@ -78,18 +78,32 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 
 See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
 
-## License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
-## Acknowledgments
-
-* Tuka
+* Free software: Apache Software License 2.0
+* Documentation: https://catpro.readthedocs.io.
 
 
+```
+catpro
+|-- ...
+|-- catpro
+        |-- data (files & scripts to fetch them)
+                |--datasets: large csv npy files (in .gitignore)
+                |--outputs: outputs of models
+                |--daic.py: preprocess DAIC dataset and return csv to ./datasets/
+        |-- config.py (in .gitignore)
+        |-- lstm.py
+        |-- lstm_ht.py
+        |-- baseline_ht.py: SVMs for baseline with hyperparameter tuning (e.g., gridsearch)
+        |-- baseline.py: final baseline used for publication with parameters from baseline_ht.py
+
+        
+```
 
 
-## Data
+
+
+
+## Datasets
 
 - X_train_df.csv:  
         - X_train for text only
@@ -116,10 +130,6 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
         - Averages multiple audio windows (over 10 msec) to match segments of text which have a start and end time (e.g., 26:34-28:16 seconds) and adds it to single data frame: X_train_df.
 
 
-
-
-
-
 - train_regression.py
 
         Hello
@@ -129,3 +139,33 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
         Hello
 
+
+
+## Acknowledgments
+
+* Tuka
+* Ev Fedorenko
+* This package was created with Cookiecutter and the `audreyr/cookiecutter-pypackage` project template.
+
+        - Cookiecutter: https://github.com/audreyr/cookiecutter
+
+        - `audreyr/cookiecutter-pypackage`: https://github.com/audreyr/cookiecutter-pypackage
+
+
+
+TODO (see commented text)
+-----
+
+
+[//]: <> (add this at some point
+.. image:: https://img.shields.io/pypi/v/catpro.svg
+        :target: https://pypi.python.org/pypi/catpro
+.. image:: https://img.shields.io/travis/danielmlow/catpro.svg
+        :target: https://travis-ci.org/danielmlow/catpro
+.. image:: https://readthedocs.org/projects/catpro/badge/?version=latest
+        :target: https://catpro.readthedocs.io/en/latest/?badge=latest
+        :alt: Documentation Status
+.. image:: https://pyup.io/repos/github/danielmlow/catpro/shield.svg
+     :target: https://pyup.io/repos/github/danielmlow/catpro/
+     :alt: Updates 
+)
