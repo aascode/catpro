@@ -1,6 +1,25 @@
 from sklearn.svm import SVC, LinearSVC
 from sklearn.feature_selection import SelectKBest, chi2, f_classif, mutual_info_classif, SelectFromModel, SelectFpr
 from sklearn import preprocessing
+import datetime
+import os
+
+def make_output_dir(output_dir):
+    # TODO
+    '''
+
+    :param output_dir: 
+    :return: 
+    '''
+    directory_name = datetime.datetime.now().strftime("%y-%m-%d-%H-%M-%S")  # random number so its not replaced
+    path_to_dir = os.path.join(output_dir, directory_name)
+    try:
+        os.mkdir(os.path.join(output_dir, directory_name))
+    except:
+        print('file was not created or already exists')
+    return path_to_dir
+
+
 
 def normalize(array_train = None, array_test = None, test=False): #TODO put several options in if statements, change variable to scaler.
     min_max_scaler = preprocessing.StandardScaler()  #this method isn't working, returns inf on LSTM.

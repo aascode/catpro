@@ -1,13 +1,13 @@
 #TODO: figure out which libraries might be used by other features.
-# TODO: add contributors to each script?
-# TODO: change name of this .py to baselines.py
+# TODO: add contributors to each script
+# TODO: replace config.config with config_params.
 
 # from _elementtree import Element
 # import codecs
 # from collections import Counter
 # import csv
 import logging
-import datetime
+# import datetime
 # import math
 import os
 # import operator
@@ -24,13 +24,13 @@ import numpy as np
 import pandas as pd
 # from scipy.sparse.coo import coo_matrix
 from sklearn.model_selection import cross_validate
-from sklearn import preprocessing
+# from sklearn import preprocessing
 # from sklearn import svm, metrics, naive_bayes
 # from sklearn.cross_validation import StratifiedKFold
 # from sklearn.datasets import load_svmlight_file
 # from sklearn.feature_selection import RFECV
-from sklearn.model_selection import cross_val_score
-from sklearn.feature_selection import SelectKBest, chi2, f_classif, mutual_info_classif
+# from sklearn.model_selection import cross_val_score
+# from sklearn.feature_selection import SelectKBest, chi2, f_classif, mutual_info_classif
 # from sklearn.grid_search import GridSearchCV
 # from sklearn.linear_model import LogisticRegressionCV, LogisticRegression
 from sklearn.metrics import roc_auc_score, precision_score, recall_score, f1_score
@@ -41,7 +41,7 @@ from sklearn.metrics import roc_auc_score, precision_score, recall_score, f1_sco
 from sklearn.svm import SVC, LinearSVC
 # from sklearn.linear_model import LogisticRegression
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
-from sklearn.feature_selection import SelectFromModel, SelectFpr
+# from sklearn.feature_selection import SelectFromModel, SelectFpr
 # import tensorflow as tf
 # import tensorflow_hub as hub
 
@@ -84,21 +84,7 @@ logger = logging.getLogger(__name__)
 config_params = config.config
 input_dir = config_params['input']
 
-def make_output_dir(output_dir):
-    # TODO
-    '''
-    
-    :param output_dir: 
-    :return: 
-    '''
-    directory_name = datetime.datetime.now().strftime("%y-%m-%d-%H-%M-%S") #random number so its not replaced
-    path_to_dir = os.path.join(output_dir,'bl_classifier',directory_name)
-    try: os.mkdir(os.path.join(output_dir,'bl_classifier',directory_name))
-    except:
-        print('file was not created or already exists')
-    return path_to_dir
-
-path_to_dir = make_output_dir(config_params['output_dir'])
+path_to_dir = data_helpers.make_output_dir(os.path.join(config_params['output_dir'], 'baselines/'))
 handler = logging.FileHandler(os.path.join(path_to_dir,'self_training.log'))
 handler.setLevel(logging.INFO)
 logger.addHandler(handler)

@@ -38,7 +38,7 @@ from sklearn.model_selection import train_test_split
 # from keras.layers import Lambda
 # from keras.layers import Embedding
 import data_helpers
-
+import config
 
 # from data_handler import * #TODO: put load_data functions into data_handler when your finished
 
@@ -184,7 +184,6 @@ def trainLSTM(X_train=None, y_train=None, X_dev=None, y_dev=None, R_train=None, 
     hsize       = hyperparams['hsize']
     nlayers     = hyperparams['nlayers']
     loss        = hyperparams['loss']
-    dirpath     = hyperparams['dirpath']
     momentum    = hyperparams['momentum']
     decay       = hyperparams['decay']
     dropout     = hyperparams['dropout']
@@ -320,18 +319,18 @@ def trainLSTM(X_train=None, y_train=None, X_dev=None, y_dev=None, R_train=None, 
 
 
     # defining callbacks - creating directory to dump files
-    dirpath = dirpath + str(exp)
-    os.system('mkdir ' + dirpath)
+    # path_to_dir = path_to_dir + str(exp)
 
+    path_to_dir = data_helpers.make_output_dir(os.path.join(config.config['output_dir'], 'neural_networks/'))
     # serialize model to JSON
     model_json = model.to_json()
-    with open(dirpath + "/model.json", "w") as json_file:
+    with open(path_to_dir + "/model.json", "w") as json_file:
         json_file.write(model_json)
 
     # checkpoints
     # filepaths to checkpoints
-    filepath_best       = dirpath + "/weights-best.hdf5"
-    filepath_epochs     = dirpath + "/weights-{epoch:02d}-{loss:.2f}.hdf5"
+    filepath_best       = path_to_dir + "/weights-best.hdf5"
+    filepath_epochs     = path_to_dir + "/weights-{epoch:02d}-{loss:.2f}.hdf5"
 
     # log best model
     checkpoint_best     = ModelCheckpoint(filepath_best,   monitor='val_loss', verbose=0, save_best_only=True, mode='auto')
@@ -340,7 +339,7 @@ def trainLSTM(X_train=None, y_train=None, X_dev=None, y_dev=None, R_train=None, 
     checkpoint_epochs   = ModelCheckpoint(filepath_epochs, monitor='val_loss', verbose=0, save_best_only=True, mode='auto')
 
     # log results to csv file
-    csv_logger          = CSVLogger(dirpath + '/training.log')
+    csv_logger          = CSVLogger(path_to_dir + '/training.log')
 
     # loss_history        = LossHistory()
     # lrate               = LearningRateScheduler()
@@ -353,7 +352,7 @@ def trainLSTM(X_train=None, y_train=None, X_dev=None, y_dev=None, R_train=None, 
     # reduce_lr         = ReduceLROnPlateau(monitor='acc', factor=0.2, patience=5, min_lr=0.0001)
 
     # log files to plot via tensorboard
-    tensorboard         = TensorBoard(log_dir=dirpath + '/logs', histogram_freq=0, write_graph=True, write_images=False)
+    tensorboard         = TensorBoard(log_dir=path_to_dir + '/logs', histogram_freq=0, write_graph=True, write_images=False)
 
     #calculate custom performance metric
     perf                = Metrics()
@@ -493,7 +492,7 @@ class Metrics(Callback):
 #
 #
 #     # defining files to save
-#     # dirpath = dirpath + str(exp)
+#     # path_to_dir = path_to_dir + str(exp)
 #     os.system('mkdir ' + exppath)
 #
 #     # serialize model to JSON
@@ -567,7 +566,7 @@ def combineFeats():
 
     # PROCESSING AUDIO
     # ===============================
-    hyperparams = {'exp': 20, 'timesteps': 30, 'stride': 1, 'lr': 9.9999999999999995e-07, 'nlayers': 3, 'hsize': 128, 'batchsize': 128, 'epochs': 300, 'momentum': 0.80000000000000004, 'decay': 0.98999999999999999, 'dropout': 0.20000000000000001, 'dropout_rec': 0.20000000000000001, 'loss': 'binary_crossentropy', 'dim': 100, 'min_count': 3, 'window': 3, 'wepochs': 25, 'layertype': 'bi-lstm', 'merge_mode': 'mul', 'dirpath': 'data/LSTM_10-audio/', 'exppath': 'data/LSTM_10-audio/20/', 'text': 'data/Step10/alltext.txt', 'balClass': False}
+    hyperparams = {'exp': 20, 'timesteps': 30, 'stride': 1, 'lr': 9.9999999999999995e-07, 'nlayers': 3, 'hsize': 128, 'batchsize': 128, 'epochs': 300, 'momentum': 0.80000000000000004, 'decay': 0.98999999999999999, 'dropout': 0.20000000000000001, 'dropout_rec': 0.20000000000000001, 'loss': 'binary_crossentropy', 'dim': 100, 'min_count': 3, 'window': 3, 'wepochs': 25, 'layertype': 'bi-lstm', 'merge_mode': 'mul', 'path_to_dir': 'data/LSTM_10-audio/', 'exppath': 'data/LSTM_10-audio/20/', 'text': 'data/Step10/alltext.txt', 'balClass': False}
     exppath = hyperparams['exppath']
 
     # load model
@@ -610,7 +609,7 @@ def combineFeats():
 
     # PROCESSING DOCS
     # ===============================
-    hyperparams = {'exp': 330, 'timesteps': 7, 'stride': 3, 'lr': 0.10000000000000001, 'nlayers': 2, 'hsize': 4, 'batchsize': 64, 'epochs': 300, 'momentum': 0.84999999999999998, 'decay': 1.0, 'dropout': 0.10000000000000001, 'dropout_rec': 0.80000000000000004, 'loss': 'binary_crossentropy', 'dim': 100, 'min_count': 3, 'window': 3, 'wepochs': 25, 'layertype': 'bi-lstm', 'merge_mode': 'concat', 'dirpath': 'data/LSTM_10/', 'exppath': 'data/LSTM_10/330/', 'text': 'data/Step10/alltext.txt', 'balClass': False}
+    hyperparams = {'exp': 330, 'timesteps': 7, 'stride': 3, 'lr': 0.10000000000000001, 'nlayers': 2, 'hsize': 4, 'batchsize': 64, 'epochs': 300, 'momentum': 0.84999999999999998, 'decay': 1.0, 'dropout': 0.10000000000000001, 'dropout_rec': 0.80000000000000004, 'loss': 'binary_crossentropy', 'dim': 100, 'min_count': 3, 'window': 3, 'wepochs': 25, 'layertype': 'bi-lstm', 'merge_mode': 'concat', 'path_to_dir': 'data/LSTM_10/', 'exppath': 'data/LSTM_10/330/', 'text': 'data/Step10/alltext.txt', 'balClass': False}
     exppath = hyperparams['exppath']
 
     # load model
@@ -740,9 +739,9 @@ def load_train_data_lstm(dataset='train', timesteps=33, group_by='response'):
     # test = self.kwargs.get('test')
     # inputPath = self.kwargs.get('input')
     # audio_file = self.kwargs.get('audio_file')
-
+    print('loading data...')
     if group_by=='interview':
-        inputPath = './data/input/'  # TODO: load from config
+        inputPath = config.config['input'] #TODO: change to variable , inestead of dictionary
         audio_file = 'text_audio_df.csv'
         text_audio = pd.read_csv(inputPath + audio_file)
         #
@@ -793,7 +792,7 @@ def load_train_data_lstm(dataset='train', timesteps=33, group_by='response'):
         # elif type == 'test' and test: #TODO
         #     return X_test_audio, y_test_audio, audio_features
     elif group_by=='response':
-        inputPath = './data/input/'  # TODO: load from config
+        inputPath = config.config['input']  # TODO: make variable in config
         audio_file = 'text_audio_df_nonconcat.csv' #TODO, buld one using nonconcat.
         text_audio = pd.read_csv(inputPath + audio_file)
         text_audio = text_audio[text_audio.FILE_TYPE==dataset.upper()]
@@ -879,7 +878,7 @@ if __name__ == "__main__":
     # X_train, y_train = loadAudio()  # TODO: add other sets
     # X_train_text,X_train_audio, y_train =  load_train_data_lstm(type='train')
     X_train_text,X_train, y_train =  load_train_data_lstm(dataset='train', timesteps=5) #TODO, use above
-    test_size = 0.2
+    test_size = config.config['train_test_split']
     X_train, X_dev, y_train, y_dev = train_test_split(X_train, y_train , test_size = test_size , random_state = 0, shuffle=True) #TODO: save fixed.
 
 
@@ -919,8 +918,7 @@ if __name__ == "__main__":
     hyperparams_final = {'exp': 1, 'timesteps': timesteps, 'stride': 1, 'activation_function': activation_function, 'lr': lr, 'nlayers': nlayers, 'hsize': hsize,
                    'batchsize': 64, 'epochs': epochs, 'momentum': 0.8, 'decay': 0.99, 'dropout': 0.2,
                    'dropout_rec': 0.2, 'loss': 'binary_crossentropy', 'dim': 100, 'min_count': 3, 'window': 3,
-                   'wepochs': 25, 'layertype': layer_type, 'merge_mode': 'mul',
-                   'dirpath': 'data/runs/', 'exppath': 'data/runs/',
+                   'wepochs': 25, 'layertype': layer_type, 'merge_mode': 'mul', 'exppath': 'data/runs/',
                    'text': 'data/Step10/alltext.txt', 'balClass': balClass, 'act_output': act_output, 'optimizer': optimizer}  # TODO: Tuka had 'balClass': False
 
     pred_dev_audio, pred_train_audio = trainLSTM(X_train=X_train, y_train=y_train, X_dev=X_dev, y_dev=y_dev, hyperparams=hyperparams_final) #TODO, add sets
@@ -943,13 +941,15 @@ if __name__ == "__main__":
     # cweight = class_weight.compute_class_weight('balanced', np.unique(y_train), y_train)
     mean_confidence = np.nanmean([np.abs(n-0.5) for n in pred_dev_audio]).round(3) #how far from 0.5 is it. 0.5 is max.
     print('mean confidence: ', np.round(mean_confidence, 3))
-    pred_dev_audio_int = [int(n) for n in np.round(pred_dev_audio)]
+    pred_dev_audio_int = np.array([int(n) for n in np.round(pred_dev_audio)])
     print('how many were predicted as depression? ', str(np.sum(pred_dev_audio_int)), 'out of', str(y_dev.shape[0]))
     f1 = metrics.f1_score(y_dev, pred_dev_audio_int, pos_label=1)
     print('f1: ',np.round(f1, 3))
-    f1_weighted = metrics.f1_score(y_dev, pred_dev_audio, average='weighted')
+    print('y_dev ', y_dev, '\n')
+    print('pred_dev_audio_int ', pred_dev_audio_int)
+    f1_weighted = metrics.f1_score(y_dev, pred_dev_audio_int , average='weighted')
     print('f1_weighted: ', np.round(f1_weighted, 3))
-    acc = metrics.accuracy_score(y_dev, pred_dev_audio)
+    acc = metrics.accuracy_score(y_dev, pred_dev_audio_int )
     print('acc: ',np.round(acc, 3))
 
 
