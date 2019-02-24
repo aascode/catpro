@@ -89,12 +89,15 @@ catpro
         |-- data (files & scripts to fetch them)
                 |--datasets: large csv npy files (in .gitignore)
                 |--outputs: outputs of models
+                        |-- interpretation
                 |--daic.py: preprocess DAIC dataset and return csv to ./datasets/
         |-- config.py (in .gitignore)
         |-- lstm.py
-        |-- lstm_ht.py
+        |-- lstm_ht.py: for hyperparameter tuning
         |-- baseline_ht.py: SVMs for baseline with hyperparameter tuning (e.g., gridsearch)
         |-- baseline.py: final baseline used for publication with parameters from baseline_ht.py
+        |-- interpretation.py
+                - show top feature scores for a given input in a heatmap
 
         
 ```

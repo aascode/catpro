@@ -20,6 +20,7 @@ import os
 from scipy import sparse
 import scipy
 from sklearn.model_selection import train_test_split
+from sklearn.calibration import CalibratedClassifierCV
 import numpy as np
 import pandas as pd
 # from scipy.sparse.coo import coo_matrix
@@ -33,7 +34,7 @@ from sklearn.model_selection import cross_validate
 # from sklearn.feature_selection import SelectKBest, chi2, f_classif, mutual_info_classif
 # from sklearn.grid_search import GridSearchCV
 # from sklearn.linear_model import LogisticRegressionCV, LogisticRegression
-from sklearn.metrics import roc_auc_score, precision_score, recall_score, f1_score
+from sklearn.metrics import roc_auc_score, precision_score, recall_score, f1_score, accuracy_score
 # from sklearn.metrics import jaccard_similarity_score
 # from sklearn.naive_bayes import BernoulliNB, MultinomialNB
 # from sklearn.naive_bayes import GaussianNB
@@ -90,7 +91,7 @@ handler.setLevel(logging.INFO)
 logger.addHandler(handler)
 
 sentObject = SentimentIntensityAnalyzer()
-
+dataHandler = data_handler.DataHandler(config_params)
 # def doc2vec(documents):
 #     model = Doc2Vec(documents, vector_size=5, window=2, min_count=1, workers=4)
 #     return model
@@ -109,13 +110,13 @@ def createRegularTrainingFeatureVector(featureList,config_params,featureNames,fe
     totalNeg = 0
     neutral = 0
 
+
     training_data = dataHandler.loadInputData(type='train')
 
-    categories = config_params['labels']
+    categories = training_data.get('labels')
 
-    for index,pair in enumerate(training_data):
+    for index,quote in enumerate(training_data.get('input')):
 
-        quote = pair
         label = categories[index]
 
 
@@ -133,7 +134,7 @@ def createRegularTrainingFeatureVector(featureList,config_params,featureNames,fe
             featureMap.update(interjs)
 
         if 'EMBED' in featureNames:
-            embeds = featGenr.generateEmbeddingFeatures(quote,vectors,unknown_vec,100)
+            embeds = featGenr.generateEmbeddingFeatures(quote,vectors,unknown_vec,100) #TODO: set 100 in config
             featureMap.update(embeds)
 
         if 'VADER' in featureNames:
@@ -462,10 +463,11 @@ def TrainAndValidate(X_train=None, y_train=None,X_test=None,y_test=None,class_we
         logger.info(str(parameter_set))
         kernel = parameter_set[0]
         C = parameter_set[1]
-        if kernel == 'linear':
-            clf = LinearSVC(C=C, class_weight=class_weight, random_state=0)
-        else:
-            clf = SVC(C=C, kernel=kernel, class_weight=class_weight, probability=probability, random_state=0)
+        # if kernel == 'linear':
+        #     clf = LinearSVC(C=C, class_weight=class_weight, random_state=0) #only cv
+        #     clf = CalibratedClassifierCV(LinearSVC(C=C, class_weight=class_weight, random_state=0))
+        # else:
+        clf = SVC(C=C, kernel=kernel, class_weight=class_weight, probability=probability, random_state=0)
         print('training model...\n')
 
         if perform_cross_validation:
@@ -497,11 +499,22 @@ def TrainAndValidate(X_train=None, y_train=None,X_test=None,y_test=None,class_we
         else:
             # perform train-dev split
             logger.info('=======executing train-dev split model')
-            X_train, X_dev, y_train, y_dev = train_test_split(X_train, y_train, test_size=0.20, random_state=0,
-                                                              shuffle=True)  # TODO: save and add test_size to parameters.
+            text = dataHandler.loadInputData(type='train').get('input')
+            X_train, X_dev, y_train, y_dev, X_train_text, X_dev_text = train_test_split(X_train, y_train, text[:4974], test_size=0.20, random_state=0,
+                                                              shuffle=False)  # TODO: save and add test_size to parameters.
+            y_dev = [int(n) for n in y_dev]
+            # TODO: shuffle, I think text has some of the test set.
             clf.fit(X_train, y_train)
+
             y_pred = clf.predict(X_dev)
-            f1 = f1_score(y_dev, y_pred, average='weighted')
+            y_pred = [int(n) for n in y_pred]
+            # For interpretation purposes, we compute the decision confidence (i.e., normalized distance from boundary)
+            # TODO add interpretation.py functions here.
+
+
+            f1 = f1_score(y_dev, y_pred)
+            acc = accuracy_score(y_dev, y_pred)
+            print(acc)
             roc_auc = roc_auc_score(y_dev, y_pred)
             precision = precision_score(y_dev, y_pred)
             recall = recall_score(y_dev, y_pred)
@@ -560,7 +573,7 @@ def generateFeatureAndClassification(config_params, perform_cross_validation=Tru
 
     if run_text:
         if 'EMBED' in featureNames:
-
+            print('loading embeddings...\n')
             vocabs = dataHandler.loadAllVocabs(inputPath)
             vectors = dataHandler.loadEmbedding(vocabs,vector_length=100) # TODO: save loaded version, cause it takes a while
 
@@ -585,22 +598,23 @@ def generateFeatureAndClassification(config_params, perform_cross_validation=Tru
             boundary_index = len(allFeatureList)#.index('BOUNDARY_FEATURE')
             vec_length = 100 #TODO: automatically shape from glove embeddings file name
             unknown_vec = np.random.normal(0,0.17,vec_length)
-
+            print('loading features...')
             training_reg_features,training_regular_cache = createRegularTrainingFeatureVector \
-            (allFeatureList,training_data,featureNames,featGenr,training_regular_cache,boundary_index,vectors,unknown_vec,0) #TODO: takes several minutes
+            (allFeatureList,config_params,featureNames,featGenr,training_regular_cache,boundary_index,vectors,unknown_vec,0) #TODO: takes several minutes
 
-            regTrainingData, indices, indptr, y_train_run_text = training_reg_features[0],training_reg_features[1],\
+            regTrainingData, indices, indptr, y_train_text = training_reg_features[0],training_reg_features[1],\
             training_reg_features[2],training_reg_features[3]
 
             X_train_text = scipy.sparse.csr_matrix((regTrainingData, indices, indptr))
+            print('normalizing...')
             X_train_text_normalized = data_helpers.normalize(array_train=X_train_text.toarray())
             print("feature selection...================================================")
-            # print(X_train_run_text_normalized.shape)
-            X_train_text_normalized_best = data_helpers.f_feature_selection(X=X_train_text_normalized, y=y_train_run_text, k=1000,
+            # print(X_train_text_normalized.shape)
+            X_train_text_normalized_best, kbest_features_names_text= data_helpers.f_feature_selection(X=X_train_text_normalized, y=y_train_text, k=1000,
                                                                audio_features=allFeatureList,
                                                                print_=True)  # 0.5991, 0.48
-            np.savez_compressed('./X_train_text', a = X_train_text_normalized_best)
-            np.save('./y_train_text.npy', y_train_text)
+            # np.savez_compressed('./X_train_text', a = X_train_text_normalized_best)
+            # np.save('./y_train_text.npy', y_train_text)
 
 
 
@@ -616,8 +630,8 @@ def generateFeatureAndClassification(config_params, perform_cross_validation=Tru
                 X_dev = scipy.sparse.csr_matrix((regDevData, indices, indptr))
         else:
 
-            X_train_run_text_normalized_best = np.load(os.path.join(input_dir , 'X_train_text.npz'))['a']
-            y_train_run_text = np.load(os.path.join(input_dir , 'y_train_text.npy'))
+            X_train_text_normalized_best = np.load(os.path.join(input_dir , 'X_train_text.npz'))['a']
+            y_train_text = np.load(os.path.join(input_dir , 'y_train_text.npy'))
 
 
 
@@ -632,8 +646,8 @@ def generateFeatureAndClassification(config_params, perform_cross_validation=Tru
 
 
         # nonzero_per_example = []
-        # for i in range(len(X_train_run_text_normalized_best)):
-        #     nonzero_per_example.append(np.count_nonzero(X_train_run_text_normalized_best[i]))
+        # for i in range(len(X_train_text_normalized_best)):
+        #     nonzero_per_example.append(np.count_nonzero(X_train_text_normalized_best[i]))
         #
         # print(np.mean(nonzero_per_example))
 
@@ -654,11 +668,11 @@ def generateFeatureAndClassification(config_params, perform_cross_validation=Tru
             print(X_train_audio_normalized.shape)
             # X_train_audio_normalized_best = l1_feature_selection(X=X_train_audio_normalized, y = y_train_audio) #61.42 and 49.71
             # TODO: select k with gridsearch
-            X_train_audio_normalized_best = data_helpers.f_feature_selection(X=X_train_audio_normalized, y=y_train_audio, k=32, audio_features=audio_features, print_=True) #0.5991, 0.48
+            X_train_audio_normalized_best, kbest_features_names_audio = data_helpers.f_feature_selection(X=X_train_audio_normalized, y=y_train_audio, k=32, audio_features=audio_features, print_=True) #0.5991, 0.48
             # X_train_audio_normalized_best = data_helpers.f_feature_selection(X=X_train_audio_normalized, y=y_train_audio, k=32, audio_features=audio_features, print_=True) #k=32: 0.5934, 0.4740
             # X_train_audio_normalized_best = feature_selection_fpr(X=X_train_audio_normalized, y=y_train_audio, alpha=0.01)
             print(X_train_audio_normalized_best.shape)
-            np.savez_compressed('./X_train_audio', a = X_train_audio_normalized_best, b=y_train_audio)
+            # np.savez_compressed('./X_train_audio', a = X_train_audio_normalized_best, b=y_train_audio)
         else:
             X_train_audio_normalized_best, y_train_audio = np.load(os.path.join(input_dir, 'X_train_audio.npz'))['a'], np.load(os.path.join(input_dir, 'X_train_audio.npz'))['b']
 
@@ -668,17 +682,17 @@ def generateFeatureAndClassification(config_params, perform_cross_validation=Tru
         print(np.sum(y_train_audio == y_train))
         '''
         # concatenate features
-        X_train_all = np.concatenate((X_train_run_text_normalized_best, X_train_audio_normalized_best), axis=1)
+        X_train_all = np.concatenate((X_train_text_normalized_best, X_train_audio_normalized_best), axis=1)
         # print(X_train_all.shape)
         if toy:
 
             logger.info('Running multimodal SVM gridsearch============================================================')
-            TrainAndValidate(X_train=X_train_all, y_train=y_train_run_text,
+            TrainAndValidate(X_train=X_train_all, y_train=y_train_text,
                              perform_cross_validation=perform_cross_validation, kernels = ['linear'], Cs = [1, 10])
 
             # logger.info(
             #     'Running run_text SVM gridsearch==================================================================')
-            # TrainAndValidate(X_train=X_train_run_text_normalized_best, y_train=y_train_run_text,
+            # TrainAndValidate(X_train=X_train_text_normalized_best, y_train=y_train_text,
             #                  perform_cross_validation=perform_cross_validation, kernels = ['linear'], Cs = [1, 10])
             #
             # logger.info('Running audio SVM gridsearch=================================================================')
@@ -686,17 +700,17 @@ def generateFeatureAndClassification(config_params, perform_cross_validation=Tru
             #                  perform_cross_validation=perform_cross_validation, kernels = ['linear'], Cs = [1, 10])
         else:
             logger.info('Running multimodal SVM gridsearch============================================================')
-            TrainAndValidate(X_train=X_train_all, y_train=y_train_run_text, perform_cross_validation=perform_cross_validation)
+            TrainAndValidate(X_train=X_train_all, y_train=y_train_text, perform_cross_validation=perform_cross_validation)
 
             logger.info('Running run_text SVM gridsearch==================================================================')
-            TrainAndValidate(X_train=X_train_run_text_normalized_best, y_train=y_train_run_text, perform_cross_validation=perform_cross_validation)
+            TrainAndValidate(X_train=X_train_text_normalized_best, y_train=y_train_text, perform_cross_validation=perform_cross_validation)
 
             logger.info('Running audio SVM gridsearch=================================================================')
             TrainAndValidate(X_train=X_train_audio_normalized_best, y_train=y_train_audio, perform_cross_validation=perform_cross_validation) # Cs=[10],kernels=['rbf']
 
     elif run_text and not run_audio:
         logger.info('Running run_text SVM gridsearch==================================================================')
-        TrainAndValidate(X_train=X_train_run_text_normalized_best, y_train=y_train_run_text, perform_cross_validation=perform_cross_validation)
+        TrainAndValidate(X_train=X_train_text_normalized_best, y_train=y_train_text, perform_cross_validation=perform_cross_validation)
 
     elif run_audio and not run_text:
 

@@ -3,9 +3,7 @@ config.py
 
 
 # data
-catpro/data/datasets
-catpro/data/outputs/
-catpro/data/util/
+catpro/data/
 
 
 

@@ -1,8 +1,13 @@
+
+import datetime
+import os
+
+import numpy
 from sklearn.svm import SVC, LinearSVC
 from sklearn.feature_selection import SelectKBest, chi2, f_classif, mutual_info_classif, SelectFromModel, SelectFpr
 from sklearn import preprocessing
-import datetime
-import os
+from mlxtend.evaluate import permutation_test
+
 
 def make_output_dir(output_dir):
     # TODO
@@ -21,9 +26,9 @@ def make_output_dir(output_dir):
 
 
 
-def normalize(array_train = None, array_test = None, test=False): #TODO put several options in if statements, change variable to scaler.
-    min_max_scaler = preprocessing.StandardScaler()  #this method isn't working, returns inf on LSTM.
-    # min_max_scaler = preprocessing.MinMaxScaler(feature_range=(0,1))  # feature_range=(-1, 1). TODO: verify best method and if I should do on audio data
+def normalize(array_train = None, array_test = None, test=False, feature_range=(0,1)): #TODO put several options in if statements, change variable to scaler.
+    # min_max_scaler = preprocessing.StandardScaler()  #this method isn't working, returns inf on LSTM.
+    min_max_scaler = preprocessing.MinMaxScaler(feature_range=feature_range)  # feature_range=(-1, 1). TODO: verify best method and if I should do on audio data
     X_minmax_train = min_max_scaler.fit_transform(array_train)
     if test:
         X_minmax_dev = min_max_scaler.fit_transform(array_test)
@@ -55,3 +60,38 @@ def f_feature_selection(X=None, y=None, k=32, audio_features=None, print_=True):
 def feature_selection_fpr(X=None, y=None, alpha=0.01):
     X_new = SelectFpr(f_classif, alpha=alpha).fit_transform(X, y)
     return X_new
+
+
+def split_test_into_classes(X_test=None, y_test=None):
+    '''
+    This is to then perform permutation_test
+    :param X_test: 
+    :param y_test: 
+    :return: 
+    '''
+
+    X_test_control = []
+    X_test_disorder = []
+    for i in range(len(y_test)):
+        if y_test[i] == 0:
+            X_test_control.append(X_test[i])
+        elif y_test[i] == 1:
+            X_test_disorder.append(X_test[i])
+        # TODO: expand for multiclass
+    return np.array(X_test_control), np.array(X_test_disorder)
+
+
+def permutation(disorder, control):
+    '''
+    http://rasbt.github.io/mlxtend/user_guide/evaluate/permutation_test/
+    :param disorder: 
+    :param control: 
+    :return: 
+    '''
+    p_value = permutation_test(disorder, control[:272],
+                               method='approximate',
+                               num_rounds=10000,
+                               seed=0)
+    print(p_value)
+    return p_value
+
