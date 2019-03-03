@@ -1,4 +1,5 @@
 import os
+import datetime
 # import sys
 # sys.path.insert(0, './../../keras-gpt-2/')
 
@@ -28,11 +29,30 @@ import numpy as np
 import pandas as pd
 
 import config
-import data_helpers
+# import data_helpers #itertools created a problem with docker.
 
 inputPath = config.config['input']  # TODO: change to variable , inestead of dictionary
 output_dir = config.config['output_dir']
-path_to_dir = data_helpers.make_output_dir(os.path.join(config.config['output_dir']))
+
+
+def make_output_dir(output_dir):
+    # TODO
+    '''
+
+    :param output_dir: 
+    :return: 
+    '''
+    directory_name = datetime.datetime.now().strftime("%y-%m-%d-%H-%M-%S")  # random number so its not replaced
+    path_to_dir = os.path.join(output_dir, directory_name)
+    try:
+        os.mkdir(os.path.join(output_dir, directory_name))
+    except:
+        print('file was not created or already exists')
+    return path_to_dir
+
+
+
+path_to_dir = make_output_dir(os.path.join(config.config['output_dir']))
 
 
 
