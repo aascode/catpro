@@ -353,7 +353,7 @@ class FeatureGenerator:
             if glove_embedding is None:
                     #print 'embedding is missing?'
                 glove_embedding  = unknown_vec
-            embedding_sum = np.sum([embedding_sum, glove_embedding], axis=0) 
+            embedding_sum = np.sum([embedding_sum, glove_embedding], axis=0)  #TODO: try averaging.
             # vector sum (similar to Mitchell / Lapata but with predicted vectors)
         
             embedding_sum = np.divide(embedding_sum,num)

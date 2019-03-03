@@ -514,7 +514,7 @@ def TrainAndValidate(X_train=None, y_train=None,X_test=None,y_test=None,class_we
 
             f1 = f1_score(y_dev, y_pred)
             acc = accuracy_score(y_dev, y_pred)
-            print(acc)
+            print(f1)
             roc_auc = roc_auc_score(y_dev, y_pred)
             precision = precision_score(y_dev, y_pred)
             recall = recall_score(y_dev, y_pred)
@@ -752,6 +752,9 @@ def generateFeatureAndClassification(config_params, perform_cross_validation=Tru
 
 if __name__ == '__main__':
     # Parameters
+    # y_train_text = np.load(os.path.join(input_dir, 'y_train_text.npy')) #TODO: maybe do with y_test
+    # y_train, y_dev = train_test_split(y_train_text,test_size=0.20, random_state=0,shuffle=True)
+    # distributions, significance_scores = data_helpers.permutation_test(y_test=y_dev, alpha=0.01)
     for i in [True, False]:
         if i == True:
             logger.info('Running Cross')

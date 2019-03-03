@@ -1,0 +1,11 @@
+numpy
+scipy>=0.13.3
+matplotlib
+seaborn
+pandas==0.23.0
+h5py
+scikit-learn
+tensorflow
+keras
+keras-gpt-2
+itertools

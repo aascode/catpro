@@ -1,0 +1,22 @@
+'''
+
+
+
+'''
+
+
+docker build -t sk_keras .
+# docker images, find number and replace below
+docker tag a972e8720d8e danielmlow/sk_keras
+docker push danielmlow/sk_keras
+
+# in cluster:
+singularity build
+# dont change the path below
+export SINGULARITY_CACHEDIR="/dev/shm/$(whoami)"
+singularity build gpt.simg docker://danielmlow/gpt
+
+
+docker login -u danielmlow
+# email password
+docker push danielmlow/gpt
