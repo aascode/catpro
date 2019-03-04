@@ -4,10 +4,10 @@ import time
 # import sys
 # sys.path.insert(0, './../../keras-gpt-2/')
 
-
+from keras_gpt_2 import load_trained_model_from_checkpoint, get_bpe_from_files, generate
 import pandas as pd
 import numpy as np
-from keras_gpt_2 import load_trained_model_from_checkpoint, get_bpe_from_files, generate
+
 
 import config
 
