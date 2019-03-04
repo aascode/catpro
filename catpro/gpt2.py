@@ -4,11 +4,21 @@ import time
 # import sys
 # sys.path.insert(0, './../../keras-gpt-2/')
 
+import numpy as np
+import pandas as pd
 from keras_gpt_2 import load_trained_model_from_checkpoint, get_bpe_from_files, generate
 
+import config
 
+config_params = config.config
+cluster = config_params['cluster']
+inputPath = config.config['input']  # TODO: change to variable , inestead of dictionary
+output_dir = config.config['output_dir']
 
-model_folder = '/Users/danielmlow/Dropbox/gpt-2/models/117M/' #TODO move to cluster and config
+if cluster:
+    model_folder = config_params['gpt_cluster']
+else:
+    model_folder = config_params['gpt_local']
 config_path = os.path.join(model_folder, 'hparams.json')
 checkpoint_path = os.path.join(model_folder, 'model.ckpt')
 encoder_path = os.path.join(model_folder, 'encoder.json')
@@ -26,14 +36,12 @@ vocab_path = os.path.join(model_folder, 'vocab.bpe')
 
 
 
-import numpy as np
-import pandas as pd
 
-import config
+
+
 # import data_helpers #itertools created a problem with docker.
 
-inputPath = config.config['input']  # TODO: change to variable , inestead of dictionary
-output_dir = config.config['output_dir']
+
 
 
 def make_output_dir(output_dir):
@@ -114,8 +122,8 @@ def load_data(dataset='train', timesteps=33, group_by='interview', participant_o
 
 
             # TODO temp, different way of doing it:
-        person_speaking = list(text_audio_train.PARTICIPANT)
-        interview = list(text_audio_train.UTTERANCE)
+        # person_speaking = list(text_audio_train.PARTICIPANT)
+        # interview = list(text_audio_train.UTTERANCE)
         # QAs = []
         # for i in range(0, len(interview), 2):
         #     if person_speaking[i] == 'Ellie':
@@ -266,7 +274,7 @@ if __name__ == '__main__':
         end = time.time()
         time_elapsed = end - start
         print(time_elapsed)
-        completions.append([output1[0][-150:],output2[0][-150:], time_elapsed ])
+        completions.append([output1[0], output1[0][-150:], output2[0], output2[0][-150:], time_elapsed ])
     pd.DataFrame(completions).to_csv(output_dir+'completions.csv')
 
     # # Add Q: and A: to turns
@@ -290,8 +298,8 @@ if __name__ == '__main__':
     #         if 'goodbye?\n' in j or "okay i think i have asked everything i need to?\n" 'thanks for sharing your thoughts with me?\n' in j:
     #             c+=1
     ##Which quesitons to add
-    for i in range(0, len(X_train[0]), 2):
-        print(X_train[0][i])
+    # for i in range(0, len(X_train[0]), 2):
+    #     print(X_train[0][i])
 
 
 

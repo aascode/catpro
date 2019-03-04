@@ -37,8 +37,8 @@
       <file leaf-file-name="gpt2.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/gpt2.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="229">
-              <caret line="263" column="8" lean-forward="false" selection-start-line="263" selection-start-column="8" selection-end-line="263" selection-end-column="8" />
+            <state relative-caret-position="269">
+              <caret line="276" column="105" lean-forward="true" selection-start-line="276" selection-start-column="105" selection-end-line="276" selection-end-column="105" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -103,8 +103,8 @@
       <file leaf-file-name="config.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/config.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="165">
-              <caret line="11" column="28" lean-forward="false" selection-start-line="11" selection-start-column="4" selection-end-line="11" selection-end-column="28" />
+            <state relative-caret-position="210">
+              <caret line="14" column="5" lean-forward="true" selection-start-line="14" selection-start-column="5" selection-end-line="14" selection-end-column="5" />
               <folding />
             </state>
           </provider>
@@ -131,7 +131,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>features</find>
       <find>create</find>
       <find>config_params</find>
       <find>config_params[</find>
@@ -161,6 +160,7 @@
       <find>mkdir</find>
       <find>make_</find>
       <find>load_trained_model_from_checkpoint</find>
+      <find>output_dir</find>
     </findStrings>
     <replaceStrings>
       <replace>path_to_dir</replace>
@@ -187,9 +187,9 @@
         <option value="$PROJECT_DIR$/baseline.py" />
         <option value="$PROJECT_DIR$/data_helpers.py" />
         <option value="$PROJECT_DIR$/doc2vec.py" />
-        <option value="$PROJECT_DIR$/config.py" />
         <option value="$PROJECT_DIR$/baseline_ht.py" />
         <option value="$PROJECT_DIR$/lstm_ht.py" />
+        <option value="$PROJECT_DIR$/config.py" />
         <option value="$PROJECT_DIR$/gpt2.py" />
       </list>
     </option>
@@ -654,14 +654,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/config.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="11" column="28" lean-forward="false" selection-start-line="11" selection-start-column="4" selection-end-line="11" selection-end-column="28" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file:///Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/keras_layer_normalization/layer_normalization.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-943">
@@ -760,10 +752,18 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/config.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="210">
+          <caret line="14" column="5" lean-forward="true" selection-start-line="14" selection-start-column="5" selection-end-line="14" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/gpt2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="229">
-          <caret line="263" column="8" lean-forward="false" selection-start-line="263" selection-start-column="8" selection-end-line="263" selection-end-column="8" />
+        <state relative-caret-position="269">
+          <caret line="276" column="105" lean-forward="true" selection-start-line="276" selection-start-column="105" selection-end-line="276" selection-end-column="105" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
           </folding>
