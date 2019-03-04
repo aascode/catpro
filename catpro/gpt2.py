@@ -10,15 +10,19 @@ from keras_gpt_2 import load_trained_model_from_checkpoint, get_bpe_from_files, 
 
 import config
 
+
+length =15
+
+
 config_params = config.config
 cluster = config_params['cluster']
 inputPath = config.config['input']  # TODO: change to variable , inestead of dictionary
 output_dir = config.config['output_dir']
 
 if cluster:
-    model_folder = config_params['gpt_cluster']
+    model_folder = config_params['gpt2_cluster']
 else:
-    model_folder = config_params['gpt_local']
+    model_folder = config_params['gpt2_local']
 config_path = os.path.join(model_folder, 'hparams.json')
 checkpoint_path = os.path.join(model_folder, 'model.ckpt')
 encoder_path = os.path.join(model_folder, 'encoder.json')
@@ -173,9 +177,6 @@ def load_data(dataset='train', timesteps=33, group_by='interview', participant_o
         return X_train_text, X_train_audio, y_train
 
 
-
-
-
 phq8_bin = ['Do I have little interest or pleasure in doing things?',
             "Am I feeling down, depressed, or hopeless?",
             "Do I have trouble falling or staying asleep, or sleeping too much?",
@@ -185,8 +186,6 @@ phq8_bin = ['Do I have little interest or pleasure in doing things?',
             "Do I have trouble concentrating on things, such as reading the newspaper or watching television?",
             "Am I moving or speaking so slowly that other people could have noticed. Or the opposite, have I been being so fidgety or restless that I have been moving around a lot more than usual?"
             ]
-
-
 
 phq8_simple = ['Do I have little interest in doing things?',
             "Am I feeling depressed?",
@@ -227,10 +226,6 @@ phq8_simpleQ = ['Q: Do I have little interest in doing things?', 'Q: Am I feelin
 
 # text_audio_train.UTTERANCE
 
-
-
-
-
 if __name__ == '__main__':
     print('Load model from checkpoint...')
     model = load_trained_model_from_checkpoint(config_path, checkpoint_path)  # take ~ 20sec
@@ -243,7 +238,6 @@ if __name__ == '__main__':
     for each string it returns an answer starting with the phrase i give it. length isn't really working like i expect.
     So I need to combine interview into one string.m
     '''
-
     # print(output1, '=======baseline')
     # Generate
     completions = []
@@ -262,20 +256,20 @@ if __name__ == '__main__':
         '''
         # X_train_participant_subset==X_train_participant_subset[-1024:]
         start = time.time()
-        output1 = generate(model, bpe, [X_train_participant_subset], length=15, top_k=1)  # grows with length #TODO: make length longer.
+        output1 = generate(model, bpe, [X_train_participant_subset], length=length, top_k=1)  # grows with length #TODO: make length longer.
         end = time.time()
         time_elapsed = end - start
         print(time_elapsed)
         print(output1)
         # output2
         start = time.time()
-        output2 = generate(model, bpe, [X_train_participant_subset], length=15, top_k=2)  # grows with length
+        output2 = generate(model, bpe, [X_train_participant_subset], length=length, top_k=2)  # grows with length
         print(output2)
         end = time.time()
         time_elapsed = end - start
         print(time_elapsed)
         completions.append([output1[0], output1[0][-150:], output2[0], output2[0][-150:], time_elapsed ])
-    pd.DataFrame(completions).to_csv(output_dir+'completions.csv')
+    pd.DataFrame(completions).to_csv(output_dir+'gpt2/completions.csv')
 
     # # Add Q: and A: to turns
     # participant = 4
