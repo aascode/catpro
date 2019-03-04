@@ -37,8 +37,8 @@
       <file leaf-file-name="gpt2.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/gpt2.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="330">
-              <caret line="22" column="13" lean-forward="true" selection-start-line="22" selection-start-column="13" selection-end-line="22" selection-end-column="13" />
+            <state relative-caret-position="300">
+              <caret line="20" column="40" lean-forward="true" selection-start-line="20" selection-start-column="40" selection-end-line="20" selection-end-column="40" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -121,7 +121,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>create</find>
       <find>config_params</find>
       <find>config_params[</find>
       <find>bl_cla</find>
@@ -151,6 +150,7 @@
       <find>make_</find>
       <find>load_trained_model_from_checkpoint</find>
       <find>output_dir</find>
+      <find>np.</find>
     </findStrings>
     <replaceStrings>
       <replace>path_to_dir</replace>
@@ -752,8 +752,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/gpt2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="22" column="13" lean-forward="true" selection-start-line="22" selection-start-column="13" selection-end-line="22" selection-end-column="13" />
+        <state relative-caret-position="300">
+          <caret line="20" column="40" lean-forward="true" selection-start-line="20" selection-start-column="40" selection-end-line="20" selection-end-column="40" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
           </folding>

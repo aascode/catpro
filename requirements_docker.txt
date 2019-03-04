@@ -1,7 +1,9 @@
 numpy
-scipy==0.13.3
+pandas
+scipy
 seaborn
 tensorflow
 keras
 keras-embed-sim==0.2.0
 keras-gpt-2
+numpy

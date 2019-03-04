@@ -4,8 +4,9 @@ import time
 # import sys
 # sys.path.insert(0, './../../keras-gpt-2/')
 
-import numpy as np
+
 import pandas as pd
+import numpy as np
 from keras_gpt_2 import load_trained_model_from_checkpoint, get_bpe_from_files, generate
 
 import config
@@ -23,6 +24,8 @@ if cluster:
     model_folder = config_params['gpt2_cluster']
 else:
     model_folder = config_params['gpt2_local']
+
+
 config_path = os.path.join(model_folder, 'hparams.json')
 checkpoint_path = os.path.join(model_folder, 'model.ckpt')
 encoder_path = os.path.join(model_folder, 'encoder.json')
@@ -164,17 +167,17 @@ def load_data(dataset='train', timesteps=33, group_by='interview', participant_o
 
 
 
-        X_train_audio = np.array(X_train_audio)
-        X_train_text = np.array(X_train_text)
-        # np.save(output_dir + 'datasets/X_train_text.npy', X_train_text)
-        # np.save(output_dir + 'datasets/X_train_audio.npy', X_train_audio)
-        # TODO: fix
-        # for participant_matrix in X_train_audio_padded:
-        #     break
-        #     participant_vector = np.array(pd.DataFrame(participant_matrix).mean())
-        # X_train_audio_padded = pad_sequences(X_train_audio, maxlen=timesteps, padding='post', dtype='float32')
-        # X_train_text_padded = pad_sequences(X_train_text, maxlen=timesteps, padding='post', dtype='str')
-        return X_train_text, X_train_audio, y_train
+        # X_train_audio = np.array(X_train_audio)
+        # X_train_text = np.array(X_train_text)
+        # # np.save(output_dir + 'datasets/X_train_text.npy', X_train_text)
+        # # np.save(output_dir + 'datasets/X_train_audio.npy', X_train_audio)
+        # # TODO: fix
+        # # for participant_matrix in X_train_audio_padded:
+        # #     break
+        # #     participant_vector = np.array(pd.DataFrame(participant_matrix).mean())
+        # # X_train_audio_padded = pad_sequences(X_train_audio, maxlen=timesteps, padding='post', dtype='float32')
+        # # X_train_text_padded = pad_sequences(X_train_text, maxlen=timesteps, padding='post', dtype='str')
+        # return X_train_text, X_train_audio, y_train
 
 
 phq8_bin = ['Do I have little interest or pleasure in doing things?',
