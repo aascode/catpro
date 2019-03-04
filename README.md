@@ -11,7 +11,7 @@ These instructions will get you a copy of the project up and running on your loc
 What things you need to install the software and how to install them
 
 ```
-pip3 install sklearn
+TODO
 ```
 
 ### Installing
@@ -98,6 +98,8 @@ catpro
         |-- baseline.py: final baseline used for publication with parameters from baseline_ht.py
         |-- interpretation.py
                 - show top feature scores for a given input in a heatmap
+        |-- doc2vec.py: create doc2vec vectors for each segment in 
+        |-- gpt2.py: have language model give diagnosis
 
         
 ```
@@ -146,8 +148,6 @@ catpro
 
 ## Acknowledgments
 
-* Tuka
-* Ev Fedorenko
 * This package was created with Cookiecutter and the `audreyr/cookiecutter-pypackage` project template.
 
         - Cookiecutter: https://github.com/audreyr/cookiecutter

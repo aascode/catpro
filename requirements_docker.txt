@@ -1,10 +1,7 @@
 numpy
-scipy>=0.13.3
-matplotlib
+scipy==0.13.3
 seaborn
-pandas==0.23.0
-h5py
-scikit-learn
 tensorflow
 keras
+keras-embed-sim==0.2.0
 keras-gpt-2

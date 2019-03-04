@@ -4,19 +4,67 @@
 
 '''
 
+'''
+
+
+
+'''
+# MAC:
+# 0. Open Docker app on Mac
+# 1. Git push Dockerfile to a repo
+# 2. Link github repo to docker (perhaps not necessary) on https://hub.docker.com/
+
+# 3. Create docker image, which will read Dockerfile
+docker build -t catpro . 
+
+# 4. find number and replace below
+$ docker images 
+>>> docker tag 4116d4e504f0 danielmlow/catpro
+
+# 5. push local image to dockerhub
+$ docker push danielmlow/catpro
+
+# 6. in cluster (dont change the path below) necessary each time you build
+export SINGULARITY_CACHEDIR="/dev/shm/$(whoami)"
+
+# 7. this will make the simg in the repo you’re in. So be in the data repo. 
+$ cd /om2/user/dlow/containers/
+$ module add openmind/singularity
+$ singularity build catpro.simg docker://danielmlow/catpro
+
+# this is probably not necessary:
+docker login -u danielmlow
+# email password
+docker push danielmlow/catpro
+
+# 8. Every time (add -B /om2/ to have access to /om2/ data direct, you will naturally have access to your home dir. )
+$ module add openmind/singularity
+$ singularity shell -B /om2/ catpro.simg
+
+When done:
+$ exit
+
+cd /home/dlow/catpro/catpro/
+
+
+
+-----
+Notes:
+
+
 
 docker build -t sk_keras .
 # docker images, find number and replace below
-docker tag a972e8720d8e danielmlow/sk_keras
-docker push danielmlow/sk_keras
+docker tag a972e8720d8e danielmlow/NAME
+docker push danielmlow/NAME
 
 # in cluster:
 singularity build
 # dont change the path below
 export SINGULARITY_CACHEDIR="/dev/shm/$(whoami)"
-singularity build gpt.simg docker://danielmlow/gpt
+singularity build gpt.simg docker://danielmlow/NAME
 
 
 docker login -u danielmlow
 # email password
-docker push danielmlow/gpt
+docker push danielmlow/NAME

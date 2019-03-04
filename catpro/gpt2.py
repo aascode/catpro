@@ -1,5 +1,6 @@
 import os
 import datetime
+import time
 # import sys
 # sys.path.insert(0, './../../keras-gpt-2/')
 
@@ -7,7 +8,7 @@ from keras_gpt_2 import load_trained_model_from_checkpoint, get_bpe_from_files, 
 
 
 
-model_folder = '/Users/danielmlow/Dropbox/gpt-2/models/117M/'
+model_folder = '/Users/danielmlow/Dropbox/gpt-2/models/117M/' #TODO move to cluster and config
 config_path = os.path.join(model_folder, 'hparams.json')
 checkpoint_path = os.path.join(model_folder, 'model.ckpt')
 encoder_path = os.path.join(model_folder, 'encoder.json')
@@ -204,6 +205,9 @@ phq8_simpleQ = ['Q: Do I have little interest in doing things?', 'Q: Am I feelin
 # 0. Put narrative without questions and ask "Am I depressed?"
 # 1. score without  participant sample, with question, this indicates randomness for each question, as it does not know anything about the participant.
 # 2. score with     participant sample, with question
+
+# try 1) with Q: A:, 2) with \n, 3)without all that, 4) without questions, then adding "Am I depressed?", 5. with PHQ8 questions.
+
 # 3. score with     participant sample, with question, with PHQ8 questions before questions
 # 4. score without  participant sample, with question + training on samples and testing on test set
 # 5. score with     participant sample, with question + training on samples and testing on test set
@@ -226,39 +230,58 @@ if __name__ == '__main__':
     bpe = get_bpe_from_files(encoder_path, vocab_path)
     # Load data
     X_train, y_text = load_data(dataset='train', timesteps=33, group_by='interview')
-    output1 = generate(model, bpe, 'Are you depressed?', length=10, top_k=1)[0]  # grows with length
-    print(output1, '=======baseline')
+    # output1 = generate(model, bpe, ['Hello. are you depressed?'], length=10, top_k=1)  # grows with length
+    '''
+    for each string it returns an answer starting with the phrase i give it. length isn't really working like i expect.
+    So I need to combine interview into one string.m
+    '''
+
+    # print(output1, '=======baseline')
     # Generate
     completions = []
-    for participant in range(len(X_train)):
+    # for participant in range(len(X_train)): #TODO uncomment
+    for participant in range(2):
         print(participant)
-        subset = int(len(X_train[participant])*0.80)
+        participant=0
+        subset = int(len(X_train[participant])*0.70)
         # X_train_participant_subset = X_train[participant][subset:]
-        X_train_participant_subset = X_train_1_cleaned [subset:][:-1]
+        X_train_participant_subset = X_train[participant][subset:]
         # output = generate(model, bpe, X_train[i], length=10, top_k=2) #grows with length
-        for i in X_train_participant_subset:
-            print(i)
-
-        output = generate(model, bpe, X_train_participant_subset, length=1, top_k=1)  # grows with length
-        for i in output:
-            print(i)
-        output='yes'
-        completions.append(output)
+        X_train_participant_subset = ' '.join(X_train_participant_subset)
+        X_train_participant_subset = X_train_participant_subset.replace(' .', '.')
+        '''
+        limit of 1024. if i remove /n, then i can include more . NOT SURE.
+        '''
+        # X_train_participant_subset==X_train_participant_subset[-1024:]
+        start = time.time()
+        output1 = generate(model, bpe, [X_train_participant_subset], length=15, top_k=1)  # grows with length #TODO: make length longer.
+        end = time.time()
+        time_elapsed = end - start
+        print(time_elapsed)
+        print(output1)
+        # output2
+        start = time.time()
+        output2 = generate(model, bpe, [X_train_participant_subset], length=15, top_k=2)  # grows with length
+        print(output2)
+        end = time.time()
+        time_elapsed = end - start
+        print(time_elapsed)
+        completions.append([output1[0][-150:],output2[0][-150:], time_elapsed ])
     pd.DataFrame(completions).to_csv(output_dir+'completions.csv')
 
-    # Add Q: and A: to turns
-    participant = 4
-    X_train_1_cleaned = []
-    for i in range(0,len(X_train[participant ]),2):
-        question = 'Q: '+X_train[participant ][i].replace('\n', '')
-        try: answer= 'A: ' + X_train[participant ][i+1].replace('\n', '')
-        except: pass
-        X_train_1_cleaned.append(question)
-        X_train_1_cleaned.append(answer)
-
-    a = []
-    a.append("Q: Are you depressed?")
-    ' '.join(a)
+    # # Add Q: and A: to turns
+    # participant = 4
+    # X_train_1_cleaned = []
+    # for i in range(0,len(X_train[participant ]),2):
+    #     question = 'Q: '+X_train[participant ][i].replace('\n', '')
+    #     try: answer= 'A: ' + X_train[participant ][i+1].replace('\n', '')
+    #     except: pass
+    #     X_train_1_cleaned.append(question)
+    #     X_train_1_cleaned.append(answer)
+    #
+    # a = []
+    # a.append("Q: Are you depressed?")
+    # ' '.join(a)
 
     # Find final phrases to remove
     # c = 0
