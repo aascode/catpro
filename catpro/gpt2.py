@@ -250,7 +250,10 @@ if __name__ == '__main__':
         '''
         # X_train_participant_subset==X_train_participant_subset[-1024:]
         start = time.time()
-        output1 = generate(model, bpe, [X_train_participant_subset], length=length, top_k=1)  # grows with length #TODO: make length longer.
+        try:
+            output1 = generate(model, bpe, [X_train_participant_subset], length=length, top_k=1)  # grows with length #TODO: make length longer.
+        except:
+            ouput1 = 'size issue'
         end = time.time()
         time_elapsed = end - start
         print(time_elapsed)
