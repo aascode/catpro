@@ -236,10 +236,9 @@ if __name__ == '__main__':
     # print(output1, '=======baseline')
     # Generate
     completions = []
-    # for participant in range(len(X_train)): #TODO uncomment
-    for participant in range(2):
+    for participant in range(len(X_train)): #TODO uncomment
+    # for participant in range(2):
         print(participant)
-        participant=0
         subset = int(len(X_train[participant])*0.70)
         # X_train_participant_subset = X_train[participant][subset:]
         X_train_participant_subset = X_train[participant][subset:]
@@ -255,15 +254,16 @@ if __name__ == '__main__':
         end = time.time()
         time_elapsed = end - start
         print(time_elapsed)
-        print(output1)
+        # print(output1)
         # output2
-        start = time.time()
-        output2 = generate(model, bpe, [X_train_participant_subset], length=length, top_k=2)  # grows with length
-        print(output2)
-        end = time.time()
-        time_elapsed = end - start
-        print(time_elapsed)
-        completions.append([output1[0], output2[0], time_elapsed ])
+        # start = time.time()
+        # output2 = generate(model, bpe, [X_train_participant_subset], length=length, top_k=2)  # grows with length
+        # print(output2)
+        # end = time.time()
+        # time_elapsed = end - start
+        # print(time_elapsed)
+        completions.append([output1[0], time_elapsed])
+        # completions.append([output1[0], output2[0], time_elapsed ])
     pd.DataFrame(completions).to_csv(path_to_dir+'/completions.csv')
 
     # # Add Q: and A: to turns

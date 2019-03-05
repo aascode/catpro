@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
-#SBATCH --time=0:05:00
-#SBATCH --mem=2GB
+#SBATCH --time=1:30:00
+#SBATCH --mem=6GB
 #SBATCH --gres=gpu:GEFORCEGTX1080TI:1
 #SBATCH -c4
 
