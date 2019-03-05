@@ -263,7 +263,7 @@ if __name__ == '__main__':
         end = time.time()
         time_elapsed = end - start
         print(time_elapsed)
-        completions.append([output1[0], output1[0][-150:], output2[0], output2[0][-150:], time_elapsed ])
+        completions.append([output1[0], output2[0], time_elapsed ])
     pd.DataFrame(completions).to_csv(path_to_dir+'/completions.csv')
 
     # # Add Q: and A: to turns
