@@ -12,18 +12,6 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="baseline_ht.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/baseline_ht.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="10545">
-              <caret line="752" column="26" lean-forward="false" selection-start-line="752" selection-start-column="0" selection-end-line="752" selection-end-column="26" />
-              <folding>
-                <element signature="e#256#270#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="data_handler.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/data_handler.py">
           <provider selected="true" editor-type-id="text-editor">
@@ -37,10 +25,10 @@
       <file leaf-file-name="gpt2.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/gpt2.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="210">
-              <caret line="286" column="19" lean-forward="false" selection-start-line="286" selection-start-column="19" selection-end-line="286" selection-end-column="19" />
+            <state relative-caret-position="0">
+              <caret line="0" column="22" lean-forward="false" selection-start-line="0" selection-start-column="22" selection-end-line="0" selection-end-column="22" />
               <folding>
-                <element signature="e#0#9#0" expanded="true" />
+                <element signature="e#24#33#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -49,21 +37,11 @@
       <file leaf-file-name="gpt2_no_ellie.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/gpt2_no_ellie.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="96">
-              <caret line="144" column="50" lean-forward="false" selection-start-line="144" selection-start-column="50" selection-end-line="144" selection-end-column="50" />
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="22" />
               <folding>
-                <element signature="e#0#9#0" expanded="true" />
+                <element signature="e#24#33#0" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="run_gpt2.sh" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/run_gpt2.sh">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="210">
-              <caret line="14" column="0" lean-forward="true" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
-              <folding />
             </state>
           </provider>
         </entry>
@@ -161,8 +139,8 @@
       <find>metrics</find>
       <find>import metr</find>
       <find>pred_dev_audio_int</find>
-      <find>t_train</find>
       <find>letter</find>
+      <find>t_train</find>
     </findStrings>
     <replaceStrings>
       <replace>path_to_dir</replace>
@@ -196,8 +174,9 @@
         <option value="$PROJECT_DIR$/config_cluster.py" />
         <option value="$PROJECT_DIR$/config.py" />
         <option value="$PROJECT_DIR$/gpt2_phq8.py" />
-        <option value="$PROJECT_DIR$/gpt2.py" />
         <option value="$PROJECT_DIR$/gpt2_no_ellie.py" />
+        <option value="$PROJECT_DIR$/run_gpt2_no_ellie.sh" />
+        <option value="$PROJECT_DIR$/gpt2.py" />
         <option value="$PROJECT_DIR$/run_gpt2.sh" />
       </list>
     </option>
@@ -385,13 +364,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/../../keras-gpt-2/keras_gpt_2/model.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="27" column="0" lean-forward="true" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/data_helpers.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1890">
@@ -753,28 +725,36 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/gpt2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="286" column="19" lean-forward="false" selection-start-line="286" selection-start-column="19" selection-end-line="286" selection-end-column="19" />
+        <state relative-caret-position="0">
+          <caret line="0" column="22" lean-forward="false" selection-start-line="0" selection-start-column="22" selection-end-line="0" selection-end-column="22" />
           <folding>
-            <element signature="e#0#9#0" expanded="true" />
+            <element signature="e#24#33#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/run_gpt2.sh">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="14" column="0" lean-forward="true" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
+        <state relative-caret-position="120">
+          <caret line="8" column="96" lean-forward="false" selection-start-line="8" selection-start-column="96" selection-end-line="8" selection-end-column="96" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/run_gpt2_no_ellie.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="11" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/gpt2_no_ellie.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="96">
-          <caret line="144" column="50" lean-forward="false" selection-start-line="144" selection-start-column="50" selection-end-line="144" selection-end-column="50" />
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="22" />
           <folding>
-            <element signature="e#0#9#0" expanded="true" />
+            <element signature="e#24#33#0" expanded="true" />
           </folding>
         </state>
       </provider>

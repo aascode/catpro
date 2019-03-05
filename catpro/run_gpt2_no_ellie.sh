@@ -6,6 +6,6 @@
 #SBATCH -c4
 
 module add openmind/singularity/3.0
-singularity exec -B /om2/ -e /om2/user/dlow/containers/catpro.simg /home/dlow/catpro/catpro/gpt2.py
+singularity exec -B /om2/ -e /om2/user/dlow/containers/catpro.simg /home/dlow/catpro/catpro/gpt2_no_ellie.py
 echo 'Finished.'
 
