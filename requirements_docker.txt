@@ -1,9 +1,8 @@
-numpy
-pandas
-scipy
-seaborn
-tensorflow
-keras
-keras-embed-sim==0.2.0
-keras-gpt-2
-numpy
+tensorflow==1.12.0
+pandas==0.23.0
+scipy==1.1.0
+seaborn==0.9.0
+matplotlib==2.0.2
+numpy==1.16.2
+keras==2.1.2
+keras-gpt-2==0.3.0

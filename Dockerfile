@@ -1,5 +1,5 @@
 #Use an official Python runtime as a parent image
-FROM python:3.5
+FROM python:3.6.0
 MAINTAINER dlow "dlow@mit.edu"
 
 # Set the working directory to /app
@@ -15,7 +15,7 @@ RUN pip3 install --trusted-host pypi.python.org -r requirements_docker.txt
 EXPOSE 80
 
 # Define environment variable
-ENV NAME catpro01
+ENV NAME catpro
 
 # Run app.py when the container launches
 CMD ["python", "app.py"]

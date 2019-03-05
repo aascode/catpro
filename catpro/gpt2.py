@@ -7,26 +7,16 @@ import time
 import pandas as pd
 import numpy as np
 from keras_gpt_2 import load_trained_model_from_checkpoint, get_bpe_from_files, generate
-
-
-
 import config
-
 
 length =15
 
 
 config_params = config.config
-cluster = config_params['cluster']
-inputPath = config.config['input']  # TODO: change to variable , inestead of dictionary
+
+inputPath = config.config['input']
 output_dir = config.config['output_dir']
-
-if cluster:
-    model_folder = config_params['gpt2_cluster']
-else:
-    model_folder = config_params['gpt2_local']
-
-
+model_folder = config_params['gpt2']
 config_path = os.path.join(model_folder, 'hparams.json')
 checkpoint_path = os.path.join(model_folder, 'model.ckpt')
 encoder_path = os.path.join(model_folder, 'encoder.json')
@@ -126,6 +116,7 @@ def load_data(dataset='train', timesteps=33, group_by='interview', participant_o
             else:
                 interview_cleaned.append('Are you depressed?')
             X_train_text.append(interview_cleaned)
+        # np.savez_compressed(output_dir+'/datasets/')
         return np.array(X_train_text), np.array(y_train)
 
 

@@ -24,21 +24,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="data_handler.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="data_handler.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/data_handler.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="645">
-              <caret line="50" column="40" lean-forward="false" selection-start-line="50" selection-start-column="17" selection-end-line="50" selection-end-column="40" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="gpt2.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/gpt2.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="105">
-              <caret line="7" column="18" lean-forward="false" selection-start-line="7" selection-start-column="18" selection-end-line="7" selection-end-column="18" />
+            <state relative-caret-position="126">
+              <caret line="33" column="27" lean-forward="true" selection-start-line="33" selection-start-column="27" selection-end-line="33" selection-end-column="27" />
               <folding />
             </state>
           </provider>
@@ -78,21 +68,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="model.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../../keras-gpt-2/keras_gpt_2/model.py">
+      <file leaf-file-name="config.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/config.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="165">
-              <caret line="16" column="72" lean-forward="false" selection-start-line="16" selection-start-column="66" selection-end-line="16" selection-end-column="72" />
+            <state relative-caret-position="45">
+              <caret line="3" column="3" lean-forward="true" selection-start-line="3" selection-start-column="3" selection-end-line="3" selection-end-column="3" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="config.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/config.py">
+      <file leaf-file-name="config_cluster.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/config_cluster.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="135">
-              <caret line="9" column="17" lean-forward="false" selection-start-line="9" selection-start-column="17" selection-end-line="9" selection-end-column="17" />
+            <state relative-caret-position="300">
+              <caret line="20" column="45" lean-forward="true" selection-start-line="20" selection-start-column="45" selection-end-line="20" selection-end-column="45" />
               <folding />
             </state>
           </provider>
@@ -119,10 +109,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>config_params</find>
-      <find>config_params[</find>
-      <find>bl_cla</find>
-      <find>group_by</find>
       <find>X_train_text</find>
       <find>'create_features':False,</find>
       <find>text_audio</find>
@@ -149,6 +135,10 @@
       <find>load_trained_model_from_checkpoint</find>
       <find>output_dir</find>
       <find>np.</find>
+      <find>input</find>
+      <find>input_path</find>
+      <find>input_path</find>
+      <find>a</find>
     </findStrings>
     <replaceStrings>
       <replace>path_to_dir</replace>
@@ -177,6 +167,7 @@
         <option value="$PROJECT_DIR$/doc2vec.py" />
         <option value="$PROJECT_DIR$/baseline_ht.py" />
         <option value="$PROJECT_DIR$/lstm_ht.py" />
+        <option value="$PROJECT_DIR$/config_cluster.py" />
         <option value="$PROJECT_DIR$/config.py" />
         <option value="$PROJECT_DIR$/gpt2.py" />
       </list>
@@ -383,7 +374,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2415">
           <caret line="165" column="0" lean-forward="true" selection-start-line="165" selection-start-column="0" selection-end-line="165" selection-end-column="0" />
-          <folding />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -694,14 +687,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/data_handler.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="645">
-          <caret line="50" column="40" lean-forward="false" selection-start-line="50" selection-start-column="17" selection-end-line="50" selection-end-column="40" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file:///Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/keras_gpt_2/gen.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="345">
@@ -720,14 +705,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/config_cluster.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="8" column="15" lean-forward="true" selection-start-line="8" selection-start-column="15" selection-end-line="8" selection-end-column="15" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/data_helpers.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="180">
@@ -738,18 +715,36 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/config_cluster.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="300">
+          <caret line="20" column="45" lean-forward="true" selection-start-line="20" selection-start-column="45" selection-end-line="20" selection-end-column="45" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/config.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="9" column="17" lean-forward="false" selection-start-line="9" selection-start-column="17" selection-end-line="9" selection-end-column="17" />
+        <state relative-caret-position="45">
+          <caret line="3" column="3" lean-forward="true" selection-start-line="3" selection-start-column="3" selection-end-line="3" selection-end-column="3" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/gpt2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="7" column="18" lean-forward="false" selection-start-line="7" selection-start-column="18" selection-end-line="7" selection-end-column="18" />
+        <state relative-caret-position="219">
+          <caret line="115" column="17" lean-forward="true" selection-start-line="115" selection-start-column="17" selection-end-line="115" selection-end-column="17" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data_handler.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="126">
+          <caret line="33" column="27" lean-forward="true" selection-start-line="33" selection-start-column="27" selection-end-line="33" selection-end-column="27" />
           <folding />
         </state>
       </provider>
