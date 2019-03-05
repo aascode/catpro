@@ -7,11 +7,9 @@ import time
 import pandas as pd
 import numpy as np
 from keras_gpt_2 import load_trained_model_from_checkpoint, get_bpe_from_files, generate
-from sklearn import metrics
-
 import config
 
-length =10
+length =15
 
 
 config_params = config.config
@@ -237,12 +235,12 @@ if __name__ == '__main__':
     '''
     # print(output1, '=======baseline')
     # Generate
-    print('=====================separated+0.7====================')
+    print('=====================separated====================')
     completions = []
     for participant in range(len(X_train)): #TODO uncomment
     # for participant in range(2):
         print(participant)
-        subset = int(len(X_train[participant])*0.70)
+        subset = int(len(X_train[participant])*0.60)
         # X_train_participant_subset = X_train[participant][subset:]
         X_train_participant_subset = X_train[participant][subset:]
         # output = generate(model, bpe, X_train[i], length=10, top_k=2) #grows with length
@@ -256,8 +254,7 @@ if __name__ == '__main__':
         try:
             output1 = generate(model, bpe, [X_train_participant_subset], length=length, top_k=1)  # grows with length #TODO: make length longer.
         except:
-            output1 = 'size issue'
-            print(output1)
+            ouput1 = 'size issue'
         end = time.time()
         time_elapsed = end - start
         print(time_elapsed)
@@ -272,53 +269,6 @@ if __name__ == '__main__':
         completions.append([output1[0], time_elapsed])
         # completions.append([output1[0], output2[0], time_elapsed ])
     pd.DataFrame(completions).to_csv(path_to_dir+'/completions.csv')
-
-
-
-analyze=True
-if analyze:
-    # completions = pd.read_csv(output_dir+'gpt2/completions_.7.csv')
-    completions = pd.read_csv(output_dir+'gpt2/completions_.7_phq8.csv')
-    # completions8['1'].sum()/60
-    # >>> both were 112 minutes
-    completions = [n[-50:] for n in list(completions['0'])]
-    completions_responses = []
-    # manual annotation (biased)
-    with open(output_dir+'gpt2/completions.txt', 'w') as f:
-        f.write('\n==========\n'.join(completions))
-    for i in completions:
-        print('====================================')
-        print(i)
-        # resp = input('response: ')
-        # completions_responses.append(resp)
-    y_pred = []
-    y_train_reduced = list(y_train[:])
-    for i,pred in enumerate(completions_responses):
-        if pred=='0':
-            y_pred.append(0)
-        elif pred=='1':
-            y_pred.append(1)
-        else:
-            y_train_reduced[i] = '-'
-
-    y_train_reduced = [x for x in y_train_reduced if not isinstance(x, str)]
-
-
-
-
-    f1 = metrics.f1_score(y_train_reduced , y_pred)
-    acc = metrics.accuracy_score(y_train_reduced , y_pred)
-    precision = metrics.precision_score(y_train_reduced , y_pred)
-    recall = metrics.recall_score(y_train_reduced , y_pred)
-    print('f1: \t', np.round(f1, 2))
-    print('acc: \t', np.round(acc, 2))
-    print('prec: \t', np.round(precision, 2))
-    print('rec: \t', np.round(recall, 2))
-
-
-
-
-
 
     # # Add Q: and A: to turns
     # participant = 4
@@ -347,3 +297,40 @@ if analyze:
 
 
 
+
+
+
+        # Get confidence
+
+# # predict response to depression after seeing scores on PHQ8. THat isn't that difficult I suppose. try with linear model.
+# # ======================================================
+# # for i, question in enumerate(phq8_simple):
+# QA_pairs_all = []
+# for row_i in range(y_train_df.shape[0]):
+#     row = y_train_df.iloc[row_i]
+#     QA_pairs_participant = []
+#     for i, score in enumerate(row[3:]):
+#         if score == 0:
+#             response = 'Not at all'
+#         elif score == 1:
+#             response = 'Several days'
+#         elif score == 2:
+#             response = 'More than half the days'
+#         elif score == 3:
+#             response = 'Nearly every day' #TODO: try changing these responses.
+#         QA_pair = [phq8_simple[i]+'\n', response+'\n\n']
+#         QA_pairs_participant.append(QA_pair)
+#     QA_pairs_all.append(QA_pairs_participant)
+#     # HQ8_NoInterest =
+#     # PHQ8_Depressed =
+#     # PHQ8_Sleep =
+#     # PHQ8_Tired =
+#     # PHQ8_Appetite =
+#     # PHQ8_Failure =
+#     # PHQ8_Concentrating =
+#     # PHQ8_Moving =
+#     # break
+# print('Generate text...')
+# output = generate(model, bpe, ['Am I depressed?'], length=5, top_k=1) #grows with length
+# print(output[0])
+#

@@ -11,7 +11,10 @@ from sklearn import metrics
 
 import config
 
-length =10
+amount_removed = .5
+feature = '_no_ellie_'
+length =30
+
 
 
 config_params = config.config
@@ -84,6 +87,15 @@ def load_data(dataset='train', timesteps=33, group_by='interview', participant_o
         text_audio_train = text_audio[text_audio.FILE_TYPE == dataset.upper()]  # TODO load text from here too?
         if participant_only:
             text_audio_train = text_audio_train[text_audio_train.PARTICIPANT == 'Participant']  # without Ellie's questions
+            X_train_text = []
+            y_train = []
+            for participant in list(set(text_audio_train.id)):
+                text_train_participant = text_audio_train[text_audio_train.id == participant]
+                text = list(text_train_participant.UTTERANCE)
+                del text[-2:]
+                X_train_text.append('. '.join(text))
+                y_train.append(list(set(text_train_participant.LABEL))[0])
+            return X_train_text, y_train
         X_train_text = []
         y_train = []
         for participant in list(set(text_audio_train.id)):
@@ -223,13 +235,18 @@ phq8_simpleQ = ['Q: Do I have little interest in doing things?', 'Q: Am I feelin
 
 # text_audio_train.UTTERANCE
 
+
+
+
+
 if __name__ == '__main__':
     print('Load model from checkpoint...')
     model = load_trained_model_from_checkpoint(config_path, checkpoint_path)  # take ~ 20sec
     print('Load BPE from files...')
     bpe = get_bpe_from_files(encoder_path, vocab_path)
     # Load data
-    X_train, y_text = load_data(dataset='train', timesteps=33, group_by='interview')
+    X_train, y_train = load_data(dataset='train', timesteps=33, group_by='interview', participant_only=True)
+
     # output1 = generate(model, bpe, ['Hello. are you depressed?'], length=10, top_k=1)  # grows with length
     '''
     for each string it returns an answer starting with the phrase i give it. length isn't really working like i expect.
@@ -237,17 +254,15 @@ if __name__ == '__main__':
     '''
     # print(output1, '=======baseline')
     # Generate
-    print('=====================separated+0.7====================')
     completions = []
     for participant in range(len(X_train)): #TODO uncomment
-    # for participant in range(2):
         print(participant)
-        subset = int(len(X_train[participant])*0.70)
+        subset = int(len(X_train[participant])*amount_removed)
         # X_train_participant_subset = X_train[participant][subset:]
         X_train_participant_subset = X_train[participant][subset:]
         # output = generate(model, bpe, X_train[i], length=10, top_k=2) #grows with length
-        X_train_participant_subset = ' '.join(X_train_participant_subset)
         X_train_participant_subset = X_train_participant_subset.replace(' .', '.')
+        X_train_participant_subset+= '. Am I depressed? '
         '''
         limit of 1024. if i remove /n, then i can include more . NOT SURE.
         '''
@@ -271,11 +286,11 @@ if __name__ == '__main__':
         # print(time_elapsed)
         completions.append([output1[0], time_elapsed])
         # completions.append([output1[0], output2[0], time_elapsed ])
-    pd.DataFrame(completions).to_csv(path_to_dir+'/completions.csv')
+    pd.DataFrame(completions).to_csv(output_dir+'gpt2/completions'+feature+str(length)+'_'+str(amount_removed)+'.csv')
 
 
 
-analyze=True
+analyze=False
 if analyze:
     # completions = pd.read_csv(output_dir+'gpt2/completions_.7.csv')
     completions = pd.read_csv(output_dir+'gpt2/completions_.7_phq8.csv')

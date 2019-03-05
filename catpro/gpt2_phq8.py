@@ -1,14 +1,13 @@
 import os
 import datetime
 import time
+import random
 # import sys
 # sys.path.insert(0, './../../keras-gpt-2/')
 
 import pandas as pd
 import numpy as np
 from keras_gpt_2 import load_trained_model_from_checkpoint, get_bpe_from_files, generate
-from sklearn import metrics
-
 import config
 
 length =10
@@ -86,6 +85,7 @@ def load_data(dataset='train', timesteps=33, group_by='interview', participant_o
             text_audio_train = text_audio_train[text_audio_train.PARTICIPANT == 'Participant']  # without Ellie's questions
         X_train_text = []
         y_train = []
+        ids = list(set(text_audio_train.id))
         for participant in list(set(text_audio_train.id)):
             text_audio_train_participant = text_audio_train[text_audio_train.id==participant]
             y_train.append(list(set(text_audio_train_participant.LABEL))[0])
@@ -114,9 +114,9 @@ def load_data(dataset='train', timesteps=33, group_by='interview', participant_o
             interview_cleaned = interview_cleaned[:-4] #TODO: this isnt that precise, but approximate.
             if person_speaking [-1]=='Ellie':
                 # You don't want to end with ellie's goodbye but add questions
-                interview_cleaned[-1]='Are you depressed?'
+                interview_cleaned[-1]='Are you depressed?\n'
             else:
-                interview_cleaned.append('Are you depressed?')
+                interview_cleaned.append('Are you depressed?\n')
             X_train_text.append(interview_cleaned)
         # np.savez_compressed(output_dir+'/datasets/')
         return np.array(X_train_text), np.array(y_train)
@@ -184,7 +184,7 @@ phq8_bin = ['Do I have little interest or pleasure in doing things?',
             "Am I moving or speaking so slowly that other people could have noticed. Or the opposite, have I been being so fidgety or restless that I have been moving around a lot more than usual?"
             ]
 
-phq8_simple = ['Do I have little interest in doing things?',
+phq8_simple_first_person = ['Do I have little interest in doing things?',
             "Am I feeling depressed?",
             "Do I have trouble falling asleep",
             "Am I feeling tired?",
@@ -192,6 +192,17 @@ phq8_simple = ['Do I have little interest in doing things?',
             "Am I feeling that I am a failure?",
             "Do I have trouble concentrating on things?",
             "Am I moving or speaking slowly?"
+            ]
+
+
+phq8_simple= ['Do you have little interest in doing things?',
+            "Are you feeling depressed?",
+            "Do you have trouble falling asleep",
+            "Are you feeling tired?",
+            "Do you have a poor appetite?",
+            "Are you feeling that you are a failure?",
+            "Do you have trouble concentrating on things?",
+            "Are you moving or speaking slowly?"
             ]
 
 phq8_simpleQ = ['Q: Do I have little interest in doing things?', 'Q: Am I feeling depressed?', 'Q: Do I have trouble falling asleep', 'Q: Am I feeling tired?', 'Q: Do I have a poor appetite?', 'Q: Am I feeling that I am a failure?', 'Q: Do I have trouble concentrating on things?', 'Q: Am I moving or speaking slowly?']
@@ -202,7 +213,7 @@ phq8_simpleQ = ['Q: Do I have little interest in doing things?', 'Q: Am I feelin
 # phq8_simple_multi = ['Do I have little interest or pleasure in doing things? Not at all? Nearly every day?'] #TODO
 
 
-# y_train_df = pd.read_csv(inputPath + 'train_split_Depression_AVEC2017.csv')
+y_train_df = pd.read_csv(inputPath + 'train_split_Depression_AVEC2017.csv')
 
 # Use sample and ask question:
 # ======================================================
@@ -229,17 +240,46 @@ if __name__ == '__main__':
     print('Load BPE from files...')
     bpe = get_bpe_from_files(encoder_path, vocab_path)
     # Load data
-    X_train, y_text = load_data(dataset='train', timesteps=33, group_by='interview')
+    X_train, y_train = load_data(dataset='train', timesteps=33, group_by='interview')
     # output1 = generate(model, bpe, ['Hello. are you depressed?'], length=10, top_k=1)  # grows with length
     '''
     for each string it returns an answer starting with the phrase i give it. length isn't really working like i expect.
     So I need to combine interview into one string.m
     '''
     # print(output1, '=======baseline')
+
+    # predict response to depression after seeing scores on PHQ8. THat isn't that difficult I suppose. try with linear model.
+    # ======================================================
+
+
+    # for i, question in enumerate(phq8_simple):
+    QA_pairs_all = []
+    for row_i in range(y_train_df.shape[0]):
+        row = y_train_df.iloc[row_i]
+        QA_pairs_participant = []
+        for i, score in enumerate(row[4:]):
+            if score == 0:
+                response = 'Never'
+            elif score == 1:
+                response = 'Sometimes'
+            elif score == 2:
+                response = 'Often'
+            elif score == 3:
+                response = 'Every day'  # TODO: try changing these responses.
+            QA_pair = [phq8_simple[i] + '\n', response + '\n\n']
+            QA_pairs_participant.append(QA_pair)
+        random.shuffle(QA_pairs_participant)
+        QA_pairs_participant = [n for i in QA_pairs_participant for n in i]  # TODO: optional
+        QA_pairs_participant = ' '.join(QA_pairs_participant)
+        QA_pairs_all.append([QA_pairs_participant])
+
+
+
     # Generate
-    print('=====================separated+0.7====================')
+    print('=====================separated+phq8+0.7====================')
     completions = []
-    for participant in range(len(X_train)): #TODO uncomment
+    for participant in range(len(X_train)):
+
     # for participant in range(2):
         print(participant)
         subset = int(len(X_train[participant])*0.70)
@@ -248,9 +288,15 @@ if __name__ == '__main__':
         # output = generate(model, bpe, X_train[i], length=10, top_k=2) #grows with length
         X_train_participant_subset = ' '.join(X_train_participant_subset)
         X_train_participant_subset = X_train_participant_subset.replace(' .', '.')
+        # with open('sample_interview.txt', 'w') as f:
+        #     f.write(X_train_participant_subset )
+
         '''
         limit of 1024. if i remove /n, then i can include more . NOT SURE.
         '''
+
+        QA_pairs_all_participant = QA_pairs_all[participant]
+        X_train_participant_subset += QA_pairs_all_participant [0] + ' Are you depressed?\n'
         # X_train_participant_subset==X_train_participant_subset[-1024:]
         start = time.time()
         try:
@@ -271,54 +317,7 @@ if __name__ == '__main__':
         # print(time_elapsed)
         completions.append([output1[0], time_elapsed])
         # completions.append([output1[0], output2[0], time_elapsed ])
-    pd.DataFrame(completions).to_csv(path_to_dir+'/completions.csv')
-
-
-
-analyze=True
-if analyze:
-    # completions = pd.read_csv(output_dir+'gpt2/completions_.7.csv')
-    completions = pd.read_csv(output_dir+'gpt2/completions_.7_phq8.csv')
-    # completions8['1'].sum()/60
-    # >>> both were 112 minutes
-    completions = [n[-50:] for n in list(completions['0'])]
-    completions_responses = []
-    # manual annotation (biased)
-    with open(output_dir+'gpt2/completions.txt', 'w') as f:
-        f.write('\n==========\n'.join(completions))
-    for i in completions:
-        print('====================================')
-        print(i)
-        # resp = input('response: ')
-        # completions_responses.append(resp)
-    y_pred = []
-    y_train_reduced = list(y_train[:])
-    for i,pred in enumerate(completions_responses):
-        if pred=='0':
-            y_pred.append(0)
-        elif pred=='1':
-            y_pred.append(1)
-        else:
-            y_train_reduced[i] = '-'
-
-    y_train_reduced = [x for x in y_train_reduced if not isinstance(x, str)]
-
-
-
-
-    f1 = metrics.f1_score(y_train_reduced , y_pred)
-    acc = metrics.accuracy_score(y_train_reduced , y_pred)
-    precision = metrics.precision_score(y_train_reduced , y_pred)
-    recall = metrics.recall_score(y_train_reduced , y_pred)
-    print('f1: \t', np.round(f1, 2))
-    print('acc: \t', np.round(acc, 2))
-    print('prec: \t', np.round(precision, 2))
-    print('rec: \t', np.round(recall, 2))
-
-
-
-
-
+    pd.DataFrame(completions).to_csv(path_to_dir+'/completions_phq8_0.7.csv')
 
     # # Add Q: and A: to turns
     # participant = 4
@@ -346,4 +345,23 @@ if analyze:
 
 
 
+
+
+
+
+        # Get confidence
+
+
+    # HQ8_NoInterest =
+    # PHQ8_Depressed =
+    # PHQ8_Sleep =
+    # PHQ8_Tired =
+    # PHQ8_Appetite =
+    # PHQ8_Failure =
+    # PHQ8_Concentrating =
+    # PHQ8_Moving =
+    # break
+# print('Generate text...')
+# output = generate(model, bpe, ['Am I depressed?'], length=5, top_k=1) #grows with length
+# print(output[0])
 
