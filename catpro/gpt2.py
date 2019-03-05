@@ -59,7 +59,7 @@ def make_output_dir(output_dir):
 
 
 
-path_to_dir = make_output_dir(os.path.join(config.config['output_dir']))
+path_to_dir = make_output_dir(os.path.join(config_params['output_dir']+'gpt2/'))
 
 
 
@@ -264,7 +264,7 @@ if __name__ == '__main__':
         time_elapsed = end - start
         print(time_elapsed)
         completions.append([output1[0], output1[0][-150:], output2[0], output2[0][-150:], time_elapsed ])
-    pd.DataFrame(completions).to_csv(output_dir+'gpt2/completions.csv')
+    pd.DataFrame(completions).to_csv(path_to_dir+'/completions.csv')
 
     # # Add Q: and A: to turns
     # participant = 4
