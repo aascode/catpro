@@ -298,7 +298,7 @@ if analyze:
     completions = pd.read_csv(output_dir+'gpt2/completions_.7_phq8.csv')
     # completions8['1'].sum()/60
     # >>> both were 112 minutes
-    completions = [n[-50:] for n in list(completions['0'])]
+    completions = [n[-80:] for n in list(completions['0'])]
     completions_responses = []
     # manual annotation (biased)
     with open(output_dir+'gpt2/completions.txt', 'w') as f:

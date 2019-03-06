@@ -365,3 +365,74 @@ if __name__ == '__main__':
 # output = generate(model, bpe, ['Am I depressed?'], length=5, top_k=1) #grows with length
 # print(output[0])
 
+analyze=False
+if analyze:
+    # completions = pd.read_csv(output_dir+'gpt2/completions_.7.csv')
+    completions = pd.read_csv(output_dir+'gpt2/completions_.7_phq8.csv')
+    # completions8['1'].sum()/60
+    # >>> both were 112 minutes
+    completions = [n[-80:] for n in list(completions['0'])]
+    completions_responses = []
+    # manual annotation (biased)
+    with open(output_dir+'gpt2/completions_phq8.txt', 'w') as f:
+        f.write('\n==========\n'.join(completions))
+    for i in completions:
+        print('====================================')
+        print(i)
+        resp = input('response: ')
+        completions_responses.append(resp)
+    y_pred = []
+    y_train_reduced = list(y_train[:])
+    for i,pred in enumerate(completions_responses):
+        if pred=='0':
+            y_pred.append(0)
+        elif pred=='1':
+            y_pred.append(1)
+        else:
+            y_train_reduced[i] = '-'
+
+    y_train_reduced = [x for x in y_train_reduced if not isinstance(x, str)]
+
+
+
+
+    f1 = metrics.f1_score(y_train_reduced , y_pred)
+    acc = metrics.accuracy_score(y_train_reduced , y_pred)
+    precision = metrics.precision_score(y_train_reduced , y_pred)
+    recall = metrics.recall_score(y_train_reduced , y_pred)
+    print('f1: \t', np.round(f1, 2))
+    print('acc: \t', np.round(acc, 2))
+    print('prec: \t', np.round(precision, 2))
+    print('rec: \t', np.round(recall, 2))
+
+
+
+
+
+
+    # # Add Q: and A: to turns
+    # participant = 4
+    # X_train_1_cleaned = []
+    # for i in range(0,len(X_train[participant ]),2):
+    #     question = 'Q: '+X_train[participant ][i].replace('\n', '')
+    #     try: answer= 'A: ' + X_train[participant ][i+1].replace('\n', '')
+    #     except: pass
+    #     X_train_1_cleaned.append(question)
+    #     X_train_1_cleaned.append(answer)
+    #
+    # a = []
+    # a.append("Q: Are you depressed?")
+    # ' '.join(a)
+
+    # Find final phrases to remove
+    # c = 0
+    # for i in X_train:
+    #     for j in i[-7:]:
+    #         if 'goodbye?\n' in j or "okay i think i have asked everything i need to?\n" 'thanks for sharing your thoughts with me?\n' in j:
+    #             c+=1
+    ##Which quesitons to add
+    # for i in range(0, len(X_train[0]), 2):
+    #     print(X_train[0][i])
+
+
+
