@@ -320,17 +320,14 @@ if __name__ == '__main__':
 #
 #     y_train_reduced = [x for x in y_train_reduced if not isinstance(x, str)]
 #
-
-
-
-    f1 = metrics.f1_score(y_train_reduced , y_pred)
-    acc = metrics.accuracy_score(y_train_reduced , y_pred)
-    precision = metrics.precision_score(y_train_reduced , y_pred)
-    recall = metrics.recall_score(y_train_reduced , y_pred)
-    print('f1: \t', np.round(f1, 2))
-    print('acc: \t', np.round(acc, 2))
-    print('prec: \t', np.round(precision, 2))
-    print('rec: \t', np.round(recall, 2))
+    # f1 = metrics.f1_score(y_train_reduced , y_pred)
+    # acc = metrics.accuracy_score(y_train_reduced , y_pred)
+    # precision = metrics.precision_score(y_train_reduced , y_pred)
+    # recall = metrics.recall_score(y_train_reduced , y_pred)
+    # print('f1: \t', np.round(f1, 2))
+    # print('acc: \t', np.round(acc, 2))
+    # print('prec: \t', np.round(precision, 2))
+    # print('rec: \t', np.round(recall, 2))
 
 
 

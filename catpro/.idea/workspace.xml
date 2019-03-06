@@ -35,9 +35,11 @@
       <file leaf-file-name="gpt2_no_ellie.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/gpt2_no_ellie.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="147">
-              <caret line="11" column="0" lean-forward="false" selection-start-line="11" selection-start-column="2" selection-end-line="11" selection-end-column="29" />
-              <folding />
+            <state relative-caret-position="190">
+              <caret line="322" column="53" lean-forward="true" selection-start-line="322" selection-start-column="53" selection-end-line="322" selection-end-column="53" />
+              <folding>
+                <element signature="e#24#33#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -746,9 +748,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/gpt2_no_ellie.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="147">
-          <caret line="11" column="0" lean-forward="false" selection-start-line="11" selection-start-column="2" selection-end-line="11" selection-end-column="29" />
-          <folding />
+        <state relative-caret-position="190">
+          <caret line="322" column="53" lean-forward="true" selection-start-line="322" selection-start-column="53" selection-end-line="322" selection-end-column="53" />
+          <folding>
+            <element signature="e#24#33#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
