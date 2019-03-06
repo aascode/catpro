@@ -9,7 +9,7 @@ import time
 import pandas as pd
 import numpy as np
 from keras_gpt_2 import load_trained_model_from_checkpoint, get_bpe_from_files, generate
-from sklearn import metrics
+# from sklearn import metrics
 
 import config
 
@@ -292,34 +292,34 @@ if __name__ == '__main__':
 
 
 
-analyze=False
-if analyze:
-    # completions = pd.read_csv(output_dir+'gpt2/completions_.7.csv')
-    completions = pd.read_csv(output_dir+'gpt2/completions_.7_phq8.csv')
-    # completions8['1'].sum()/60
-    # >>> both were 112 minutes
-    completions = [n[-80:] for n in list(completions['0'])]
-    completions_responses = []
-    # manual annotation (biased)
-    with open(output_dir+'gpt2/completions.txt', 'w') as f:
-        f.write('\n==========\n'.join(completions))
-    for i in completions:
-        print('====================================')
-        print(i)
-        # resp = input('response: ')
-        # completions_responses.append(resp)
-    y_pred = []
-    y_train_reduced = list(y_train[:])
-    for i,pred in enumerate(completions_responses):
-        if pred=='0':
-            y_pred.append(0)
-        elif pred=='1':
-            y_pred.append(1)
-        else:
-            y_train_reduced[i] = '-'
-
-    y_train_reduced = [x for x in y_train_reduced if not isinstance(x, str)]
-
+# analyze=False
+# if analyze:
+#     # completions = pd.read_csv(output_dir+'gpt2/completions_.7.csv')
+#     completions = pd.read_csv(output_dir+'gpt2/completions_.7_phq8.csv')
+#     # completions8['1'].sum()/60
+#     # >>> both were 112 minutes
+#     completions = [n[-80:] for n in list(completions['0'])]
+#     completions_responses = []
+#     # manual annotation (biased)
+#     with open(output_dir+'gpt2/completions.txt', 'w') as f:
+#         f.write('\n==========\n'.join(completions))
+#     for i in completions:
+#         print('====================================')
+#         print(i)
+#         # resp = input('response: ')
+#         # completions_responses.append(resp)
+#     y_pred = []
+#     y_train_reduced = list(y_train[:])
+#     for i,pred in enumerate(completions_responses):
+#         if pred=='0':
+#             y_pred.append(0)
+#         elif pred=='1':
+#             y_pred.append(1)
+#         else:
+#             y_train_reduced[i] = '-'
+#
+#     y_train_reduced = [x for x in y_train_reduced if not isinstance(x, str)]
+#
 
 
 
