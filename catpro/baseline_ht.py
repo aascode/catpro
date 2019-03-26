@@ -63,35 +63,9 @@ import plot_outputs
 #from template_functions import *
 #from scipy import csr_matrix
 
-#
-#
-# if config.local_or_cluster:
-#     # directory_name = '18-06-10-20-12-59'
-#     directory_name = datetime.datetime.now().strftime("%y-%m-%d-%H-%M-%S")
-#     file_name = 'cnn'
-# else:
-#     # directory_name = '18-06-10-20-12-59'
-#     directory_name = datetime.datetime.now().strftime("%y-%m-%d-%H-%M-%S")
-#     file_name = os.path.basename(__file__)
-#
-# print('running '+directory_name+' '+file_name)
 
 
-# def output_to_dir(output_dir): #TODO
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
 
-
-config_params = config.config
-input_dir = config_params['input']
-
-path_to_dir = data_helpers.make_output_dir(os.path.join(config_params['output_dir'], 'baselines/'))
-handler = logging.FileHandler(os.path.join(path_to_dir,'self_training.log'))
-handler.setLevel(logging.INFO)
-logger.addHandler(handler)
-
-sentObject = SentimentIntensityAnalyzer()
-dataHandler = data_handler.DataHandler(config_params)
 # def doc2vec(documents):
 #     model = Doc2Vec(documents, vector_size=5, window=2, min_count=1, workers=4)
 #     return model
@@ -750,14 +724,40 @@ def generateFeatureAndClassification(config_params, perform_cross_validation=Tru
   #  featureList = ['TAGQ']
   #   generateFeatureAndClassification(config_params)
 
+
+
+
+
+
+
+
+
 if __name__ == '__main__':
-    # Parameters
-    # y_train_text = np.load(os.path.join(input_dir, 'y_train_text.npy')) #TODO: maybe do with y_test
-    # y_train, y_dev = train_test_split(y_train_text,test_size=0.20, random_state=0,shuffle=True)
-    # distributions, significance_scores = data_helpers.permutation_test(y_test=y_dev, alpha=0.01)
-    for i in [True, False]:
-        if i == True:
-            logger.info('Running Cross')
-        # main(config)
-        generateFeatureAndClassification(config_params, perform_cross_validation=i)
-        # main(sys.argv[1:])
+    config_params = config.config
+    perform_cross_validation = config_params['perform_cross_validation']
+    input_dir = config_params['input']
+
+    path_to_dir = data_helpers.make_output_dir(os.path.join(config_params['output_dir'], 'baselines/'))
+
+    handler = logging.FileHandler(os.path.join(path_to_dir, 'self_training.log'))
+    logging.basicConfig(level=logging.INFO)
+    logger = logging.getLogger(__name__)
+    handler.setLevel(logging.INFO)
+    logger.addHandler(handler)
+
+    sentObject = SentimentIntensityAnalyzer()
+    dataHandler = data_handler.DataHandler(config_params)
+
+    # load text
+
+    # create text features
+
+    # create audio features #TODO Open smile
+    # load audio features
+    X_train_text = np.load(os.path.join(input_dir,'X_train_text_groupedby_interview.npy'))
+    X_train_audio = np.load('X_train_audio_groupedby_interview.npy')
+    # Train and validate
+    TrainAndValidate(X_train=X_train_audio_normalized_best, y_train=y_train_audio,
+                     perform_cross_validation=perform_cross_validation)
+    generateFeatureAndClassification(config_params, perform_cross_validation=perform_cross_validation)
+

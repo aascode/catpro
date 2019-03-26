@@ -7,26 +7,31 @@
     I tried to clean it up from the original script so that it is least confusing.
     
     Authors: 
+    - Daniel M. Low, BCS, MIT & Harvard University, March 2019
     - Tuka Alhanai, CSAIL MIT April 4th 2018
-    - Daniel M. Low, McGovern MIT & Harvard University
+    
     
 
 """
 
-from sklearn.mixture import GaussianMixture
+
 
 import os
+import itertools
+import time
+import logging
 # import sys
-import pprint
+
 import numpy as np
 import pandas as pd
 # from sklearn.linear_model import LogisticRegression
 from sklearn import metrics
 from sklearn.utils import class_weight
 from sklearn.metrics import roc_auc_score, precision_score, recall_score, f1_score, accuracy_score
-from sklearn import preprocessing
+# from sklearn import preprocessing
 # import statsmodels.api as sm
 # from sklearn.isotonic import IsotonicRegression as IR
+# from sklearn.mixture import GaussianMixture
 # import csv
 # from scipy import signal
 # from scipy.stats import kurtosis, skew, spearmanr
@@ -40,9 +45,10 @@ from keras import optimizers
 from keras.callbacks import ModelCheckpoint, CSVLogger, TensorBoard, LearningRateScheduler, \
     EarlyStopping, ReduceLROnPlateau, Callback
 import keras.backend as K
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, StratifiedShuffleSplit
 # from keras.layers import Lambda
 # from keras.layers import Embedding
+
 import data_helpers
 import config
 import data_handler
@@ -52,126 +58,13 @@ import doc2vec
 
 
 
-# Let the user know if they are not using a GPU
-if K.tensorflow_backend._get_available_gpus() == []:
-    print('YOU ARE NOT USING A GPU ON THIS DEVICE!')
-    # sys.exit()
-
-# ============================================================================================
-# Train LSTM Model
-# ============================================================================================
-
-# def lstm_gridsearch(X_train=None, y_train=None, X_dev=None, y_dev=None, R_train=None, R_dev=None, hyperparams_fixed={}, hyperparams_gridsearch = {}):
-#     """
-#         Method to train LSTM model.
-#
-#         X_{train,dev}: should be [Nexamples, Ntimesteps, Nfeatures]
-#         y_{train,dev}: is a vector of binary outcomes
-#         R_{train,dev}: is the subject ID, useful for later when calculating performance at the subject level
-#         hyperparams:   is a dict, where each key has the values to be tested. {'layers': [1,2,3,4], 'hidden_neurons': [16,32,64], }
-#
-#     """
-#     # seed generator
-#     np.random.seed(0)
-#     parameter_sets = []
-#
-#     hyperparams_fixed = {}
-#
-#
-#     # TODO: do faster, more intelligent type of hyperparameter tuning instead of gridsearch
-#     # recurrent dropout rates of {0, 0.1, 0.2, 0.4, 0.6, 0.8, 0.8}, merge mode of {sum, mul, con- cat, ave}, and batch size of {32, 64, 128, ..., 4096}}
-#     for hyperparameter in list(hyperparams_gridsearch.values()):
-#
-#     for kernel_ in kernels:
-#         for C in Cs:
-#             parameter_sets.append([kernel_, C])
-#     logger.info(str(len(parameter_set)+' parameter sets will be run'))
-#     scores_mean_all = []
-#     for parameter_set in parameter_sets:
-#         logger.info(str(parameter_set))
-#         kernel = parameter_set[0]
-#         C = parameter_set[1]
-#         if kernel == 'linear':
-#             clf = LinearSVC(C=C, class_weight=class_weight, random_state=0)
-#         else:
-#             clf = SVC(C=C, kernel=kernel, class_weight=class_weight, probability=probability, random_state=0)
-#         print('training model...\n')
-#
-#         if perform_cross_validation:
-#             logger.info('=======executing cross validation model')
-#             scores = cross_validate(clf, X_train, y_train, scoring = scoring_classification, cv = cv, return_train_score = False)
-#             # scores_mean = [] #TODO: do automatically depending on metrics chosen
-#             # for metric in scoring_classification:
-#             scores_mean = [round(scores['test_f1'].mean(),2),
-#                            round(scores['test_f1'].std(),2),
-#                            round(scores['test_roc_auc'].mean(),2),
-#                            round(scores['test_precision'].mean(),2),
-#                            round(scores['test_recall'].mean(),2),
-#                            parameter_set[0],parameter_set[1] ]
-#             scores_mean_all.append(scores_mean)
-#             print(str(round(scores['test_f1'].mean(),4))+' '+str(parameter_set))
-#             print(str(round(scores['test_f1'].std(),4)) + ' ' +'\n\n')
-#            # #     X_test_csr = X_test.tocsr()
-#            #      predictions_all = lr1.predict(X_test)
-#            #      acc_score_all = accuracy_score(Y_test, predictions_all)
-#            #      f1_score_all = f1_score(Y_test, predictions_all,average='macro')
-#            #      if f1_score_all > best_f1:
-#            #          best_f1 = f1_score_all
-#            #          best_c = C
-#            #          best_norm = norm
-#            #          best_kernel = kernel
-#            #      print ('cost and norm ' + str(C) + ' ' + str(norm))
-#            #  logger.info("Classification report for classifier %s:\n%s\n" % (scores, metrics.classification_report( Y_test, predictions_all,digits=3)))
-#         # print ('best params (macro-avg): ',best_f1, best_c, best_norm, best_kernel)
-#         else:
-#             # perform train-dev split
-#             logger.info('=======executing train-dev split model')
-#             X_train, X_dev, y_train, y_dev = train_test_split(X_train, y_train, test_size=0.20, random_state=0,
-#                                                               shuffle=True)  # TODO: save and add test_size to parameters.
-#             clf.fit(X_train, y_train)
-#             y_pred = clf.predict(X_dev)
-#             f1 = f1_score(y_dev, y_pred)
-#             roc_auc = roc_auc_score(y_dev, y_pred)
-#             precision = precision_score(y_dev, y_pred)
-#             recall = recall_score(y_dev, y_pred)
-#             print('\n', f1, parameter_set, '\n')
-#             scores = [round(f1,2),
-#                       '-',
-#                       round(roc_auc,2),
-#                       round(precision,2),
-#                       round(recall,2),
-#                       parameter_set[0],
-#                       parameter_set[1] ] # the '-' is for f1 std, not available with
-#             scores_mean_all.append(scores) #TODO fix name (not "mean" for train-dev split)
-#     # Print latex file for all results
-#     scores_mean_all_sorted = sorted(scores_mean_all, key=lambda x: x[0])  # TODO change name. Sorted from small to large.
-#     results_all = pd.DataFrame(scores_mean_all_sorted)
-#
-#     columns = scoring_classification + ['parameter1', 'parameter2'] #TODO: do dynamically depending on amount of hyparameters
-#     columns.insert(1, 'f1 std')
-#     results_all.columns = columns
-#     logger.info(str(results_all.to_latex()))
-#     # Print latex file for best result
-#     results_best = results_all.iloc[-1,:]
-#     if perform_cross_validation:
-#         index = 'SVM 5-fold CV'
-#     else:
-#         index = 'SVM train-dev split'
-#     results_best = pd.DataFrame(results_best).T
-#     results_best.index = [index]
-#     logger.info(str(results_best.to_latex()))
-#     # best_params = scores_mean_all_sorted[-1]
-#     # logger.info('best params (means of f1, roc_auc, recall, recall): ' + str(best_params))
-#     return results_best
-#
-
-
+np.random.seed(0) #todo, figure this out. add tensorflow, keras.
 
 
 # ============================================================================================
 # Train LSTM Model
 # ============================================================================================
-def trainLSTM(X_train=None, y_train=None, X_dev=None, y_dev=None, R_train=None, R_dev=None, hyperparams=None):
+def trainLSTM(X_train=None, y_train=None, X_dev=None, y_dev=None, R_train=None, R_dev=None, hyperparams=None, path_to_dir=None):
     """
         Method to train LSTM model.
 
@@ -182,34 +75,40 @@ def trainLSTM(X_train=None, y_train=None, X_dev=None, y_dev=None, R_train=None, 
 
     """
     # seed generator
-    np.random.seed(0)
+
 
     # grab hyperparamters
-    exp         = hyperparams['exp']
+    # exp         = hyperparams['exp']
+    timesteps   = hyperparams['timesteps']
     batch_size  = hyperparams['batchsize']
     epochs      = hyperparams['epochs']
     activation_function = hyperparams['activation_function']
     optimizer   = hyperparams['optimizer']
-    lr          = hyperparams['lr']
+    # lr          = hyperparams['lr'] #TODO: make tunable
     hsize       = hyperparams['hsize']
     nlayers     = hyperparams['nlayers']
     loss        = hyperparams['loss']
-    momentum    = hyperparams['momentum']
-    decay       = hyperparams['decay']
+    # momentum    = hyperparams['momentum']
+    # decay       = hyperparams['decay']
     dropout     = hyperparams['dropout']
     dropout_rec = hyperparams['dropout_rec']
-    merge_mode  = hyperparams['merge_mode']
     layertype   = hyperparams['layertype']
     balClass    = hyperparams['balClass']
     act_output  = hyperparams['act_output']
 
+    if layertype=='bi-lstm':
+
+        merge_mode = hyperparams['merge_mode']
 
     # grab input dimension and number of timesteps (i.e. number of interview sequences)
 
     # X_train.shape = (8050-dev_set, 30 timesteps, 32 dimensions) #todo: I added this
 
+
+
+
     dim = X_train.shape[2]
-    timesteps = X_train.shape[1]
+    # timesteps = X_train.shape[1]
 
     # balance training classes
     if balClass:
@@ -303,18 +202,23 @@ def trainLSTM(X_train=None, y_train=None, X_dev=None, y_dev=None, R_train=None, 
         y_dev = R_dev
 
 
-    # print info on network
-    print(model.summary())
-    print('--- network has layers:', nlayers, ' hsize:',hsize, ' bsize:', batch_size,
-          ' lr:', lr, ' epochs:', epochs, ' loss:', loss, ' act_o:', act_output)
+    # logger.info info on network
+    logger.info(model.summary())
+    # logger.info('--- network has layers:', nlayers, ' hsize:',hsize, ' bsize:', batch_size,
+    #       ' lr:', lr, ' epochs:', epochs, ' loss:', loss, ' act_o:', act_output)
 
     # define optimizer
-    sgd = optimizers.SGD(lr=lr, momentum=momentum, decay=0, nesterov=True) #todo: determine in crossvalid
+    # sgd = optimizers.SGD(lr=lr, momentum=momentum, decay=0, nesterov=True) #todo: determine in crossvalid
 
     # compile model
-    model.compile(loss=loss,
-                  optimizer=sgd,
-                  metrics=['acc','mae','mse']) #TODO which metric?
+    if regression:
+        model.compile(loss=loss,
+                      optimizer=optimizer,
+                      metrics=['acc','mae','mse']) #TODO which metric?
+    else:
+        model.compile(loss=loss,
+                      optimizer=optimizer,
+                      metrics=['acc'])  # TODO which metric?
                 # metrics=[metrics.f1_score])
     # model.fit(X_train, y_train,
     #           batch_size=batch_size,
@@ -329,68 +233,70 @@ def trainLSTM(X_train=None, y_train=None, X_dev=None, y_dev=None, R_train=None, 
 
     # defining callbacks - creating directory to dump files
     # path_to_dir = path_to_dir + str(exp)
-    path_to_dir = data_helpers.make_output_dir(os.path.join(config.config['output_dir'], 'neural_networks/'))
-    # serialize model to JSON
-    model_json = model.to_json()
-    with open(path_to_dir + "/model.json", "w") as json_file:
-        json_file.write(model_json)
 
-    # checkpoints
-    # filepaths to checkpoints
-    filepath_best       = path_to_dir + "/weights-best.hdf5"
-    filepath_epochs     = path_to_dir + "/weights-{epoch:02d}-{loss:.2f}.hdf5"
+    call_back = False  # TODO fix: ValueError: Expected array-like (array or non-string sequence), got <tf.Tensor 'dense_40_target_1:0' shape=(?, ?) dtype=float32>
 
-    # log best model
-    checkpoint_best     = ModelCheckpoint(filepath_best,   monitor='val_loss', verbose=0, save_best_only=True, mode='auto')
-
-    # log improved model
-    checkpoint_epochs   = ModelCheckpoint(filepath_epochs, monitor='val_loss', verbose=0, save_best_only=True, mode='auto')
-
-    # log results to csv file
-    csv_logger          = CSVLogger(path_to_dir + '/training.log')
-
-    # loss_history        = LossHistory()
-    # lrate               = LearningRateScheduler()
-
-    # update decay as a function of epoch and lr
-    lr_decay            = lr_decay_callback(lr, decay)
-
-    # early stopping criterion
-    early_stop          = EarlyStopping(monitor='loss', min_delta=1e-04, patience=25, verbose=0, mode='auto')
-    # reduce_lr         = ReduceLROnPlateau(monitor='acc', factor=0.2, patience=5, min_lr=0.0001)
-
-    # log files to plot via tensorboard
-    tensorboard         = TensorBoard(log_dir=path_to_dir + '/logs', histogram_freq=0, write_graph=True, write_images=False)
-
-    #calculate custom performance metric
-    perf                = Metrics()
-
-    # these are the callbacks we care for
-    callbacks_list      = [checkpoint_best, checkpoint_epochs, early_stop, lr_decay, tensorboard, csv_logger]
-
-    # train model
-    model.fit(X_train, y_train,
-              batch_size=batch_size,
-              epochs=epochs,
-              validation_data=(X_dev, y_dev),
-              class_weight=cweight,
-              callbacks=callbacks_list)
-
-    # load best model and evaluate
-    call_back = False #TODO fix
     if call_back:
+        # serialize model to JSON
+        model_json = model.to_json()
+        with open(path_to_dir + "/model.json", "w") as json_file:
+            json_file.write(model_json)
+
+        # checkpoints
+        # filepaths to checkpoints
+        filepath_best       = path_to_dir + "/weights-best.hdf5"
+        filepath_epochs     = path_to_dir + "/weights-{epoch:02d}-{loss:.2f}.hdf5"
+
+        # log best model
+        checkpoint_best     = ModelCheckpoint(filepath_best,   monitor='val_loss', verbose=0, save_best_only=True, mode='auto')
+
+        # log improved model
+        checkpoint_epochs   = ModelCheckpoint(filepath_epochs, monitor='val_loss', verbose=0, save_best_only=True, mode='auto')
+
+        # log results to csv file
+        csv_logger          = CSVLogger(path_to_dir + '/training.log')
+
+        # loss_history        = LossHistory()
+        # lrate               = LearningRateScheduler()
+
+        # update decay as a function of epoch and lr
+        lr_decay            = lr_decay_callback(lr, decay)
+
+        # early stopping criterion
+        early_stop          = EarlyStopping(monitor='loss', min_delta=1e-04, patience=25, verbose=0, mode='auto')
+        # reduce_lr         = ReduceLROnPlateau(monitor='acc', factor=0.2, patience=5, min_lr=0.0001)
+
+        # log files to plot via tensorboard
+        tensorboard         = TensorBoard(log_dir=path_to_dir + '/logs', histogram_freq=0, write_graph=True, write_images=False)
+
+        #calculate custom performance metric
+        perf                = Metrics()
+
+        # these are the callbacks we care for
+        callbacks_list      = [checkpoint_best, checkpoint_epochs, early_stop, lr_decay, tensorboard, csv_logger]
+
+        # train model
+        model.fit(X_train, y_train,
+                  batch_size=batch_size,
+                  epochs=epochs,
+                  validation_data=(X_dev, y_dev),
+                  class_weight=cweight,
+                  callbacks=callbacks_list)
+
+        # load best model and evaluate
+
         model.load_weights(filepath=filepath_best)
 
         # gotta compile it
         model.compile(loss=loss,
-                      optimizer=sgd,
+                      optimizer=optimizer,
                       metrics=[metrics.f1_score])
 
     # return predictions of best model
-    pred        = model.predict(X_dev,   batch_size=None, verbose=0) #TODO: erased parameter steps
-    pred_train  = model.predict(X_train, batch_size=None, verbose=0)
-
-    return pred, pred_train
+    pred_dev = model.predict_classes(X_dev,   batch_size=None, verbose=0) #TODO: erased parameter steps
+    # pred_train  = model.predict(X_train, batch_size=None, verbose=0)
+    return pred_dev
+    # return pred, pred_train
 
 
 # defines step decay
@@ -401,7 +307,7 @@ def lr_decay_callback(lr_init, lr_decay):
     return LearningRateScheduler(step_decay)
 
 
-# prints additional metrics to log file
+# logger.infos additional metrics to log file
 # =================================================
 class Metrics(Callback):
 
@@ -493,9 +399,9 @@ class Metrics(Callback):
 #     # define model
 #     model = Model(inputs=input, outputs=final)
 #
-#     # print summary
-#     print(model.summary())
-#     print('--- network has layers:', nlayers, 'dsize:', dsize, 'bsize:', batch_size, 'lr:', lr, 'epochs:',
+#     # logger.info summary
+#     logger.info(model.summary())
+#     logger.info('--- network has layers:', nlayers, 'dsize:', dsize, 'bsize:', batch_size, 'lr:', lr, 'epochs:',
 #           epochs)
 #
 #
@@ -594,18 +500,18 @@ def combineFeats():
     # load best model and evaluate
     filepath_best = exppath + "/weights-best.hdf5"
     model.load_weights(filepath=filepath_best)
-    print('--- load weights')
+    logger.info('--- load weights')
 
-    sgd = optimizers.SGD(lr=lr, momentum=momentum, decay=0, nesterov=True)
+    # sgd = optimizers.SGD(lr=lr, momentum=momentum, decay=0, nesterov=True)
 
     model.compile(loss=loss,
-                  optimizer=sgd,
+                  optimizer=optimizer,
                   metrics=['accuracy'])
-    print('--- compile model')
+    logger.info('--- compile model')
 
     # load data
     X_train, y_train, X_dev, y_dev, R_train, R_dev = loadAudio()
-    print('--- load data')
+    logger.info('--- load data')
 
     # getting activations from final layer
     layer = model.layers[nlayers-1]
@@ -613,7 +519,7 @@ def combineFeats():
     _layer2 = K.function(inputs, [layer.output])
     acts_train = np.squeeze(_layer2([0] + [X_train]))
     acts_dev = np.squeeze(_layer2([0] + [X_dev]))
-    print('--- got activations')
+    logger.info('--- got activations')
 
     # PROCESSING DOCS
     # ===============================
@@ -636,18 +542,18 @@ def combineFeats():
     # load best model and evaluate
     filepath_best = exppath + "/weights-best.hdf5"
     model.load_weights(filepath=filepath_best)
-    print('--- load weights')
+    logger.info('--- load weights')
 
-    sgd = optimizers.SGD(lr=lr, momentum=momentum, decay=0, nesterov=True)
+    # sgd = optimizers.SGD(lr=lr, momentum=momentum, decay=0, nesterov=True)
 
     model.compile(loss=loss,
                   optimizer=sgd,
                   metrics=['accuracy'])
-    print('--- compile model')
+    logger.info('--- compile model')
 
     # load data
     X_train_doc, y_train, X_dev_doc, y_dev, R_train_doc, R_dev_doc = loadDoc()
-    print('--- load data')
+    logger.info('--- load data')
 
     # getting activations from final layer
     layer = model.layers[nlayers - 1]
@@ -655,7 +561,7 @@ def combineFeats():
     _layer2 = K.function(inputs, [layer.output])
     acts_train_doc = np.squeeze(_layer2([0] + [X_train_doc]))
     acts_dev_doc   = np.squeeze(_layer2([0] + [X_dev_doc]))
-    print('--- got activations')
+    logger.info('--- got activations')
 
     # FUSE EMBEDDINGS
     # ============================
@@ -665,7 +571,7 @@ def combineFeats():
         j = 0
         indexpad = np.where(S_train_doc == subj)[0]
         for i,_ in enumerate(index):
-            # print(i)
+            # logger.info(i)
             if i%4 == 0 and i > 0 and j < indexpad.shape[0]-1:
                 j = j+1
             acts_train_doc_pad.append(acts_train_doc[indexpad[j],:])
@@ -676,7 +582,7 @@ def combineFeats():
         j = 0
         indexpad = np.where(S_dev_doc == subj)[0]
         for i,_ in enumerate(index):
-            # print(i)
+            # logger.info(i)
             if i%4 == 0 and i > 0 and j < indexpad.shape[0]-1:
                 j = j+1
             acts_dev_doc_pad.append(acts_dev_doc[indexpad[j],:])
@@ -736,7 +642,7 @@ def loadFuse():
 # main script
 # ============================================================================================
 
-def load_train_data_lstm(dataset='train', timesteps=33, group_by='response', run_audio=config.config['run_audio'], run_text=config.config['run_text'], use_doc2vec=False):
+def load_train_data_lstm(dataset='train', group_by='response', run_audio=config.config['run_audio'], run_text=config.config['run_text'], use_doc2vec=False):
     '''
     
     :param type: 
@@ -747,7 +653,7 @@ def load_train_data_lstm(dataset='train', timesteps=33, group_by='response', run
     # test = self.kwargs.get('test')
     # inputPath = self.kwargs.get('input')
     # audio_file = self.kwargs.get('audio_file')
-    print('loading data...')
+    logger.info('loading data...')
     if group_by=='interview':
         inputPath = config.config['input'] #TODO: change to variable , inestead of dictionary
         audio_file = 'text_audio_df.csv'
@@ -793,13 +699,13 @@ def load_train_data_lstm(dataset='train', timesteps=33, group_by='response', run
         np.save(X_train_text, output_dir + 'X_train_text_groupedby_interview.npy')
         np.save(X_train_audio , output_dir + 'X_train_audio_groupedby_interview.npy')
         # TODO: fix
-        for participant_matrix in X_train_audio_padded:
-            break
-            participant_vector = np.array(pd.DataFrame(participant_matrix ).mean())
-        X_train_audio_padded= pad_sequences(X_train_audio, maxlen=timesteps, padding='post', dtype='float32')
-        X_train_text_padded = pad_sequences(X_train_text, maxlen=timesteps, padding='post', dtype='str')
+        # for participant_matrix in X_train_audio_padded:
+        #     break
+        #     participant_vector = np.array(pd.DataFrame(participant_matrix ).mean())
+        # X_train_audio_padded= pad_sequences(X_train_audio, maxlen=timesteps, padding=padding, dtype='float32')
+        # X_train_text_padded = pad_sequences(X_train_text, maxlen=timesteps, padding=padding, dtype='str')
         if type == 'train':
-            return X_train_text_padded, X_train_audio_padded, y_train,
+            return X_train_text, X_train_audio, y_train,
         # elif type == 'test' and test: #TODO
         # if test:
         #   text_audio_test =      # TODO
@@ -861,9 +767,9 @@ def load_train_data_lstm(dataset='train', timesteps=33, group_by='response', run
         # # For interpretation purposes, we compute the decision confidence (i.e., normalized distance from boundary)
         # # TODO add interpretation.py functions here.
         # f1 = f1_score(y_dev, y_pred)
-        # print(f1)
+        # logger.info(f1)
         # acc = accuracy_score(y_dev, y_pred)
-        # print(acc)
+        # logger.info(acc)
         # roc_auc = roc_auc_score(y_dev, y_pred)
         # precision = precision_score(y_dev, y_pred)
         # recall = recall_score(y_dev, y_pred)
@@ -895,14 +801,14 @@ def load_train_data_lstm(dataset='train', timesteps=33, group_by='response', run
         #     bad_indices = np.where(np.isinf(row))
         #     row[bad_indices] = 0
         #     audio_features_wo_inf.append(row)
-        #     print(bad_indices)
+        #     logger.info(bad_indices)
         # audio_features_wo_inf = np.array(audio_features_wo_inf)
         # audio_features.dtype  # > dtype('float16')
 
         audio_normalized = data_helpers.normalize(array_train=audio_features)#TODO: do for text as well
         k = 32
         audio_features_names = text_audio.columns[8:]
-        audio_normalized_best, kbest_features_names_audio = data_helpers.f_feature_selection(X=audio_normalized, y=np.array(text_audio.LABEL),k=k, audio_features=audio_features_names , print_= True)
+        audio_normalized_best, kbest_features_names_audio = data_helpers.f_feature_selection(X=audio_normalized, y=np.array(text_audio.LABEL),k=k, audio_features=audio_features_names , print_= True) #TODO fix print_, I'd like to log this.
         audio_normalized_best = pd.DataFrame(audio_normalized_best , columns=kbest_features_names_audio)
         text_audio_wo_audio = text_audio.iloc[:, :8].reset_index() #reset index in order to concat
         text_audio_normalized_best = pd.concat((text_audio_wo_audio ,audio_normalized_best),axis=1) #TODO: add text
@@ -913,7 +819,7 @@ def load_train_data_lstm(dataset='train', timesteps=33, group_by='response', run
         y_train = []
         segments = 0
         for row in range(text_audio_normalized_best.shape[0]):
-        # for row in range(1000:):
+        # loop through rows of segments
             speaker = text_audio_normalized_best.PARTICIPANT.iloc[row]
             if speaker == 'Ellie':
                 if segments == 0:
@@ -939,14 +845,16 @@ def load_train_data_lstm(dataset='train', timesteps=33, group_by='response', run
         X_train_text = np.array(X_train_text)
         # TODO: this is temporary, replace with full features or average embeddings, elmo, doc2vec
         if use_doc2vec:
+            # Following Alhaini (2018), train doc2vec on both questions and responses
             config_params = config.config
             if config_params['create_features']:
-                print('creating doc2vec vectors...')
+                logger.info('creating doc2vec vectors...')
+                # questions
                 text_audio_ellie = text_audio[text_audio.PARTICIPANT=='Ellie'].UTTERANCE.values #TODO: maybe do not include Ellie, lot of repeated sentences
                 texts_ellie = []
                 for i in text_audio_ellie:
                     try: texts_ellie.append(i.split())
-                    except: print('skipped segment during doc2vec training')
+                    except: logger.info('skipped segment during doc2vec training')
                 texts_participants = []
                 for j in X_train_text:
                     text_one_participant = []
@@ -954,8 +862,8 @@ def load_train_data_lstm(dataset='train', timesteps=33, group_by='response', run
                         try:
                             text_one_participant.append(i.split())
                         except:
-                            print(i)
-                            print('skipped segment during doc2vec training')
+                            logger.info(i)
+                            logger.info('skipped segment during doc2vec training')
                     texts_participants.append(text_one_participant)
                 # doc2vec neads one lists of lists, not list of list of list like text_participants is
                 text_participants_lists = []
@@ -967,14 +875,18 @@ def load_train_data_lstm(dataset='train', timesteps=33, group_by='response', run
 
                 doc2vec_model = doc2vec.doc2model(documents=texts, output_dir=config_params['output_dir'])
                 X_train_text_doc2vec = []
-                for i in texts_participants[3231:]:
+                for i in texts_participants:
                     X_train_text_doc2vec_one_participant = doc2vec.model2vec(documents=i, input_dir = config_params['output_dir'], model=doc2vec_model)
                     X_train_text_doc2vec.append(X_train_text_doc2vec_one_participant)
-                np.save('./data/datasets/X_train_text_doc2vec.npy', X_train_text_doc2vec)
+                # np.save('./data/datasets/X_train_text_doc2vec3.npy', X_train_text_doc2vec)
+                np.save('./data/datasets/X_train_text_doc2vec_latest.npy', X_train_text_doc2vec)
             else:
                 X_train_text_doc2vec = np.load(config_params['input'] + 'X_train_text_doc2vec.npy')
-            X_train_text_padded = pad_sequences(X_train_text_doc2vec, maxlen=timesteps, padding='post',
-                                                dtype='str')
+
+
+            X_train_text = X_train_text_doc2vec[:]
+            # X_train_text_padded = pad_sequences(X_train_text_doc2vec, maxlen=timesteps, padding=padding,
+            #                                     dtype='str')
         else:
             config_params = config.config
             featureNames = config_params.get('features').split(',')
@@ -992,25 +904,26 @@ def load_train_data_lstm(dataset='train', timesteps=33, group_by='response', run
                         embeds = list(featGenr.generateEmbeddingFeatures(segment, vectors, unknown_vec,
                                                                 100).values())  # TODO: set 100 in config
                         response_embeddings.append(embeds)
-                    except: print('skipped segment')
+                    except: logger.info('skipped segment')
                 response_embeddings= response_embeddings[:timesteps]
 
                 X_train_text_embeddings.append(response_embeddings)
-            X_train_text_padded = pad_sequences(X_train_text_embeddings, maxlen=timesteps, padding='post',
-                                                dtype='str')
+            X_train_text = X_train_text_embeddings[:]
+            # X_train_text_padded = pad_sequences(X_train_text_embeddings, maxlen=timesteps, padding=padding,
+            #                                     dtype='str')
         #     max=10 segments per response, mean =2.7
         # TODO: make sure y_train.shape[0] or X_train_audio.shape[0], i.e., the amount of samples matches text_audio_df_concat.csv=='Participant' length once the latter is re-preprocessed with 3 missing people.
         # TODO: could save below and try with different timesteps
         # np.savez_compressed('./data/input/X_train_nonconcatenated.npz', a=X_train_text, b=X_train_audio,
         #                     c=y_train)
         # timesteps should be near max, but not too far from mean or median of segments per response.
-        X_train_audio_padded = pad_sequences(X_train_audio, maxlen=timesteps, padding='post', dtype='float32')
+        # X_train_audio_padded = pad_sequences(X_train_audio, maxlen=timesteps, padding=padding, dtype='float32')
 
 
         # if test:
         #   text_audio_test =      # TODO
         if dataset == 'train':
-            return X_train_text_padded, X_train_audio_padded, y_train
+            return X_train_text, X_train_audio, y_train
         # elif type == 'test' and test: #TODO
         #     return X_test_audio, y_test_audio, audio_features
 
@@ -1023,133 +936,194 @@ def load_train_data_lstm(dataset='train', timesteps=33, group_by='response', run
 
 
 if __name__ == "__main__":
+
     config_params = config.config
+    path_to_dir = data_helpers.make_output_dir(os.path.join(config.config['output_dir'], 'neural_networks/'))
+
+    logging.basicConfig(level=logging.INFO)
+    logger = logging.getLogger(__name__)
+    handler = logging.FileHandler(os.path.join(path_to_dir, 'training.log'))
+    handler.setLevel(logging.INFO)
+    logger.addHandler(handler)
+    # Let the user know if they are not using a GPU
+    if K.tensorflow_backend._get_available_gpus() == []:
+        logger.info('YOU ARE NOT USING A GPU ON THIS DEVICE!')
+    
     # 1. load the data for audio
     # X_train, y_train, X_dev, y_dev, R_train, R_dev = loadAudio() #TODO
     # X_train, y_train = loadAudio()  # TODO: add other sets
     # X_train_text,X_train_audio, y_train =  load_train_data_lstm(type='train')
     group_by = config_params['group_by']
+    regression = config_params['regression']
     if group_by == 'interview':
-        X_train_text, X_train_audio, y_train_all = load_train_data_lstm(dataset='train', timesteps=100,
+        X_train_text, X_train_audio, y_train_all = load_train_data_lstm(dataset='train',
                                                                         group_by='interview')  # TODO, use above
-        # # # from sklearn.naive_bayes import ComplementNB
-        # # #
-        # # #
-        # # #
-        # # # X_train, X_dev, y_train, y_dev = train_test_split(X_train_audio_padded, y_train, test_size=test_size, random_state=0,
-        # # #                                                   shuffle=True)  # TODO: save fixed.
-        # # #
-        # #
-        # #
-        # #
-        # # clf = ComplementNB(alpha=1.0, fit_prior=True, class_prior=None, norm=False)
-        # # clf.fit(X_train, y_train)
-        #
-        # y_pred = clf.predict(X_dev)
-        # y_pred = [int(n) for n in y_pred]
-        # # For interpretation purposes, we compute the decision confidence (i.e., normalized distance from boundary)
-        # # TODO add interpretation.py functions here.
-        # f1 = f1_score(y_dev, y_pred)
-        # print(f1)
-        # acc = accuracy_score(y_dev, y_pred)
-        # print(acc)
-        # roc_auc = roc_auc_score(y_dev, y_pred)
-        # precision = precision_score(y_dev, y_pred)
-        # recall = recall_score(y_dev, y_pred)
 
     elif group_by=='response':
-        X_train_text, X_train_audio, y_train_all = load_train_data_lstm(dataset='train', timesteps=30,
+        X_train_text, X_train_audio, y_train_all = load_train_data_lstm(dataset='train',
                                                                         group_by='response', use_doc2vec=True)  # TODO, use put parameters in config
-
-
     test_size = config.config['train_test_split']
     config_params = config.config
     run_text = config_params['run_text']
     run_audio = config_params['run_audio']
-    if run_audio and run_text:
-        X_train_all = np.concatenate((X_train_text, X_train_audio), axis=2)
-        X_train, X_dev, y_train, y_dev = train_test_split(X_train_all, y_train_all, test_size=test_size, random_state=0,
-                                                          shuffle=True)  # TODO: save fixed.
-    elif not run_audio and run_text:
-        X_train, X_dev, y_train, y_dev = train_test_split(X_train_text, y_train_all, test_size=test_size, random_state=0,
-                                                          shuffle=True)  # TODO: save fixed.
-    elif run_audio and not run_text:
-        X_train, X_dev, y_train, y_dev = train_test_split(X_train_audio, y_train_all , test_size = test_size , random_state = 0, shuffle=True) #TODO: save fixed.
-
-
-
+    # TODO: cross-validation
+    # if regression: #TODO
+        # Your bins need to be appropriate for your output values
+        # e.g. 0 to 50 with 25 bins
+        # bins = np.linspace(0, 50, 25)
+        # y_binned = np.digitize(y_full, bins)
+        # X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y_binned)
     # 2. train lstm model
+    if run_audio:
+        sgd = optimizers.SGD(lr=0.000001, momentum=0.8, decay=0.99, nesterov=True)
+        lr = 0.000001
+        momentum = 0.8
+        decay = 0.99
+        timesteps = [3,20,33] #33 is max segments per response
+        hsize=[64, 128, 256]
+        dropout_rec = [0.2]
+        nlayers = [1,3]
+    elif run_text:
+        sgd = optimizers.SGD(lr=0.1, momentum=0.8, decay=0, nesterov=True)
+        lr = 0.1
+        momentum = 0.8
+        decay = 0
+        timesteps = [3,7,33]
+        hsize= [4, 32,128]
+        dropout_rec = [0.2]
+        nlayers = [1,2]
+    epochs = [3] #TODO add to stop early
 
-    # hyperparams_fixed = {}
-    # hyperparams_gridsearch = {
-    #     'layers': [1, 2, 3],
-    #     'hidden_nodes': [4, 8, 16, 32, 64, 128, 256],
-    #     'activation_function': ['relu', 'elu', 'tanh', 'hard_sigmoid'],
-    #     'dropout_rate': [0, 0.1, 0.2, 0.4, 0.6, 0.8],
-    #     'recurrent_dropout_rate': [0, 0.1, 0.2, 0.4, 0.6, 0.8],
-    #     'merge_mode': ['sum', 'mul', 'concat', 'ave'],
-    #     'batch': [32, 64, 128, 256, 512, 1024, 2056, 4096],
-    #     'loss_binary': ['binary crossentropy'],
-    #     'loss_regression': ['categorical crossentropy', 'mean_square_error', 'mean_absolute_error']
-    # }
-    # # pred_dev_audio, pred_train_audio = lstm_gridsearch(X_train=X_train, y_train=y_train, X_dev=X_dev, y_dev=y_dev,
-    # #                                              hyperparams_fixed=hyperparams_fixed,
-    # #                                              hyperparams_gridsearch=hyperparams_gridsearch)  # TODO, add sets
+    padding = 'pre' #was post before, but lstm is biased towards ending. #TODO: compare
+    # if regression: #TODO:
+    #     loss =
 
-    epochs = 2
-    timesteps=3
-    nlayers= 1 #was 3
-    hsize=100 #was 128
-    balClass= True
-    layer_type = 'lstm' #was 'bi-lstm'
-    act_output = 'sigmoid' # was 'sigmoid'
-    activation_function = 'relu'
-    lr = 0.000001
-    momentum = 0.8
-    sgd = optimizers.SGD(lr=lr, momentum=momentum, decay=0, nesterov=True)
-    optimizer = 'Adam'
+    # hyperparams_final = {'exp': 1, 'timesteps': timesteps, 'stride': 3, 'activation_function': activation_function, 'lr': lr, 'nlayers': nlayers, 'hsize': hsize,
+    #                'batchsize': 64, 'epochs': epochs, 'momentum': 0.8, 'decay': 0.99, 'dropout': 0.2,
+    #                'dropout_rec': 0.2, 'loss': 'binary_crossentropy', 'dim': 100, 'min_count': 3, 'window': 3,
+    #                'wepochs': 25, 'layertype': layer_type, 'merge_mode': 'mul', 'exppath': 'data/runs/',
+    #                'text': 'data/Step10/alltext.txt', 'balClass': balClass, 'act_output': act_output, 'optimizer': optimizer}  # TODO: Tuka had 'balClass': False
 
-    hyperparams_final = {'exp': 1, 'timesteps': timesteps, 'stride': 3, 'activation_function': activation_function, 'lr': lr, 'nlayers': nlayers, 'hsize': hsize,
-                   'batchsize': 64, 'epochs': epochs, 'momentum': 0.8, 'decay': 0.99, 'dropout': 0.2,
-                   'dropout_rec': 0.2, 'loss': 'binary_crossentropy', 'dim': 100, 'min_count': 3, 'window': 3,
-                   'wepochs': 25, 'layertype': layer_type, 'merge_mode': 'mul', 'exppath': 'data/runs/',
-                   'text': 'data/Step10/alltext.txt', 'balClass': balClass, 'act_output': act_output, 'optimizer': optimizer}  # TODO: Tuka had 'balClass': False
+    hyperparams_lstm = {'timesteps': timesteps, 'activation_function': ['relu', 'tanh'], 'act_output':['sigmoid'],  'nlayers': nlayers, 'hsize': hsize,
+    'batchsize': [64, 128], 'epochs': epochs, 'dropout': [0.2, 0.4, 0.6],'loss': ['binary_crossentropy'], 'layertype': ['lstm'],
+    'balClass': [True, False],'optimizer': ['Adam', sgd], 'dropout_rec':dropout_rec}
+    hyperparams_bilstm = {'timesteps': timesteps, 'activation_function': ['relu', 'tanh'], 'act_output': ['sigmoid'],
+                        'nlayers': nlayers, 'hsize': hsize,
+                        'batchsize': [32, 64, 128], 'epochs': epochs, 'dropout': [0.2, 0.4, 0.6],
+                        'loss': ['binary_crossentropy'], 'layertype': ['bi-lstm'],
+                        'balClass': [True, False], 'optimizer': ['Adam', sgd], 'dropout_rec':dropout_rec, 'merge_mode': ['mul', 'concat']}
+    hyperparams_final = {'timesteps': [33], 'activation_function': ['relu'], 'act_output': ['sigmoid'],'nlayers': [2], 'hsize': [128],
+                        'batchsize': [128], 'epochs': [20], 'dropout': [0.4],
+                        'loss': ['binary_crossentropy'], 'layertype': ['lstm'],
+                        'balClass': [False], 'optimizer': [sgd], 'dropout_rec': [0.2]}
+    # ==== Run gridsearch
+    model = 'lstm' #TODO: add in loop. if they're not too long
+    if model == 'lstm':
+        hyperparams = hyperparams_lstm
+    elif model == 'bi-lstm':
+        hyperparams = hyperparams_bilstm
+    if config_params['test']== True:
+        hyperparams = hyperparams_final #TODO: add final option to config. these arent the final ones anyway.
 
-    pred_dev_audio, pred_train_audio = trainLSTM(X_train=X_train, y_train=y_train, X_dev=X_dev, y_dev=y_dev, hyperparams=hyperparams_final) #TODO, add sets
-    # TODO: fix. X_dev[1097] is return pred_dev_audio=nan
-    # # 1b. load the doc data
-    # X_train, y_train, X_dev, y_dev, R_train, R_dev = loadDoc()
-    #
-    # # 2b. train lstm model for doc data
-    # pred_audio, pred_train_audio = trainLSTM(X_train, y_train, X_dev, y_dev, R_train, R_dev, hyperparams)
-    #
-    # # 3. concatenate last layer features for each audio and doc branch.
-    # combineFeats()
-    # X_train, y_train, X_dev, y_dev, R_train, R_dev = loadFuse()
-    #
-    # # 4. train feedforward.
-    # # hyperparams can be different (e.g. learning rate, decay, momentum, etc.)
-    # pred, pred_train = trainHierarchy(X_train_fuse, y_train, X_dev_fuse, y_dev, hyperparams)
-    #
-    # # 5. evaluate performance
-    # cweight = class_weight.compute_class_weight('balanced', np.unique(y_train), y_train)
-    mean_confidence = np.nanmean([np.abs(n-0.5) for n in pred_dev_audio]).round(3) #how far from 0.5 is it. 0.5 is max.
-    print('mean confidence: ', np.round(mean_confidence, 3))
-    pred_dev_audio_int = np.array([int(n) for n in np.round(pred_dev_audio)])
-    print('how many were predicted as depression? ', str(np.sum(pred_dev_audio_int)), 'out of', str(y_dev.shape[0]))
-    f1 = metrics.f1_score(y_dev, pred_dev_audio_int, pos_label=1)
-    print('f1: ',np.round(f1, 3))
-    # print('y_dev ', y_dev, '\n')
-    print('pred_dev_audio_int ', pred_dev_audio_int)
-    f1_weighted = metrics.f1_score(y_dev, pred_dev_audio_int , average='weighted')
-    print('f1_weighted: ', np.round(f1_weighted, 3))
-    acc = metrics.accuracy_score(y_dev, pred_dev_audio_int )
-    print('acc: ',np.round(acc, 3))
-    precision = metrics.precision_score(y_dev, pred_dev_audio_int )
-    recall = metrics.recall_score(y_dev, pred_dev_audio_int)
-    print('prec: ', np.round(precision, 3))
-    print('recall: ', np.round(recall, 3))
+    hyperparams_list = list(hyperparams.items())
+    hyperparams_keys = [n[0] for n in hyperparams_list] # This is so i make sure keys and values or in the same order
+    hyperparams_values = [n[1] for n in hyperparams_list]  # This is so i make sure keys and values or in the same order
+    gridsearch = list(itertools.product(*hyperparams_values ))
 
+    logger.info(len(gridsearch), 'runs...')
+    scores_all = []
+    gridsearch_hyperparams_ordered = []
+    logger.info('The following %d parameter sets are running...' % len(gridsearch))
+    logger.info(str(hyperparams))
+    with open(path_to_dir+'/gridsearch.txt','w') as f:
+        f.write(str(gridsearch))
+    for i, gridsearch_i in enumerate(gridsearch):
+        start = time.time()
+        hyperparams_i = {}
+        for j, value in enumerate(gridsearch_i):
+            hyperparams_i[hyperparams_keys[j]] = value
+        gridsearch_hyperparams_ordered.append(list(hyperparams_i.items()))
+        # Pad and split data
+        # =====
+        timesteps_i = hyperparams_i['timesteps']
+        X_train_audio_i = pad_sequences(X_train_audio, maxlen=timesteps_i, padding=padding, dtype='float32') # Not specifying dtype results in wrong data
+        X_train_text_i = pad_sequences(X_train_text, maxlen=timesteps_i, padding=padding, dtype='float32')
+        # except: logger.info('padding float did not work')
+        # try:
+        #     X_train_audio_padded = pad_sequences(X_train, maxlen=timesteps, padding=padding, dtype='float32')
+        # except: logger.info('padding float did not work')
+        if run_audio and run_text:
 
+            X_train_all = np.concatenate((X_train_text_i, X_train_audio_i), axis=2)
 
+            X_train, X_dev, y_train, y_dev = train_test_split(X_train_all, y_train_all, test_size=test_size,
+                                                              random_state=0,
+                                                              shuffle=True, stratify=y_train_all)  # TODO: save fixed.
+        elif not run_audio and run_text:
+            X_train, X_dev, y_train, y_dev = train_test_split(X_train_text_i, y_train_all, test_size=test_size,
+                                                              random_state=0,
+                                                              shuffle=True, stratify=y_train_all)  # TODO: save fixed.
+        elif run_audio and not run_text:
+            X_train, X_dev, y_train, y_dev = train_test_split(X_train_audio_i, y_train_all, test_size=test_size,
+                                                              random_state=0, shuffle=True,
+                                                              stratify=y_train_all)  # TODO: save fixed.
+        # Check stratification
+        logger.info((np.sum(y_train) / len(y_train)).round(2) == (np.sum(y_dev) / len(y_dev)).round(
+            2))  # TODO: ask if this is reasonable given depression is not 30%, but 10%
+        # Run =====
+        y_pred = trainLSTM(X_train=X_train, y_train=y_train, X_dev=X_dev, y_dev=y_dev,
+                           hyperparams=hyperparams_i, path_to_dir=path_to_dir)  # TODO, add sets
 
+        # # 5. evaluate performance ====
+        # cweight = class_weight.compute_class_weight('balanced', np.unique(y_train), y_train)
+        # mean_confidence = np.nanmean([np.abs(n - 0.5) for n in pred_dev]).round(3)  # how far from 0.5 is it. 0.5 is max.
+        # y_pred2 = np.array([int(n) for n in np.round(pred_dev)])
+        f1 = metrics.f1_score(y_dev, y_pred, pos_label=1)
+        roc_auc = roc_auc_score(y_dev, y_pred)
+        f1_weighted = metrics.f1_score(y_dev, y_pred, average='weighted')
+        acc = metrics.accuracy_score(y_dev, y_pred)
+        precision = metrics.precision_score(y_dev, y_pred)
+        recall = metrics.recall_score(y_dev, y_pred)
+        end = time.time()
+        # logger.info('confidence: ', np.round(mean_confidence, 3))
+        # str(np.sum(y_pred)), 'out of', str(y_dev.shape[0]))
+        #
+        time_i = np.round(end - start, 2)
+        # perform train-dev split
+        # logger.info('=======executing train-dev split model')
+        # logger.info('round(f1, 2), hyperparams_i, '\n')
+        scores_names = ['F1', 'Prec.', 'Rec.', 'ROC AUC', 'F1 weighted', 'Acc.', 'Time', 'Depressed', 'Parameter id']
+        scores = [round(f1, 2),
+                  round(precision, 2),
+                  round(recall, 2),
+                  round(roc_auc, 3),
+                  round(f1_weighted, 2),
+                  round(acc, 2),
+                  time_i,
+                  str(np.sum(y_pred))+'/'+str(len(y_pred)),
+                  list(hyperparams_i.items())]  # TODO test
+
+        scores_all.append(scores)
+        results_all = pd.DataFrame(scores_all, columns=scores_names)
+        results_all.to_csv(os.path.join(path_to_dir+'/scores_temp.csv'))
+    # Print latex file for all results
+
+    scores_all_sorted = sorted(scores_all, key=lambda x: x[0])  # TODO change name. Sorted from small to large.
+    results_all = pd.DataFrame(scores_all_sorted, columns=scores_names)
+    logger.info(str(results_all.to_latex()))
+    results_all.to_csv(os.path.join(path_to_dir + '/scores_final_sorted.csv'))
+    # Print latex file for best result
+    results_best = results_all.iloc[-1, :]
+    best_parameters = results_all.iloc[-1, -1]
+    perform_cross_validation = config_params['perform_cross_validation']
+    if perform_cross_validation:
+        index = 'LSTM CV'
+    else:
+        index = 'LSTM train-dev split'
+    results_best = pd.DataFrame(results_best).T
+    results_best.index = [index]
+    logger.info('\n\n')
+    logger.info('best results: ')
+    logger.info('\n')
+    logger.info(str(results_best.to_latex()))
+    logger.info(str(best_parameters))
