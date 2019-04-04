@@ -32,6 +32,27 @@ until finished
 
 End with an example of getting some data out of the system or using it for a little demo
 
+
+#### Mozilla speech-to-text
+https://github.com/mozilla/DeepSpeech
+
+```bash
+# Install:
+cd HOME_DIR
+virtualenv -p python3 ./deepspeech-venv/
+source ./deepspeech-venv/bin/activate
+pip3 install deepspeech
+
+# Pretrianed model:
+wget https://github.com/mozilla/DeepSpeech/releases/download/v0.4.1/deepspeech-0.4.1-models.tar.gz
+
+# Run:
+brew install sox
+
+deepspeech --model models/output_graph.pbmm --alphabet models/alphabet.txt --lm models/lm.binary --trie models/trie --audio /Users/danielmlow/Dropbox/catpro/catpro/data/datasets/banda/556_b.wav
+tar xvfz deepspeech-0.4.1-models.tar.gz
+```
+
 ## Running the tests
 
 Explain how to run the automated tests for this system
@@ -91,6 +112,7 @@ catpro
                 |--outputs: outputs of models
                         |-- interpretation
                 |--daic.py: preprocess DAIC dataset and return csv to ./datasets/
+                |--preprocess_banda.py: preprocess BANDA dataset and return csv to ./datasets/
         |-- config.py (in .gitignore)
         |-- lstm.py
         |-- lstm_ht.py: for hyperparameter tuning
