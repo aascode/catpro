@@ -1,7 +1,8 @@
 # config
 config.py
 config_cluster.py
-
+config*
+catpro/config*
 
 # data
 catpro/data/
