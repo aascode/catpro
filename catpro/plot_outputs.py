@@ -1,10 +1,10 @@
 import matplotlib.pyplot as plt
-plt.switch_backend('agg')
+# plt.switch_backend('agg')
 import itertools
 import pandas as pd
 import numpy as np
 from matplotlib import rcParams
-
+import seaborn as sns
 
 def df_to_latex(df):
     return df.to_latex
@@ -117,7 +117,29 @@ def learning_curve(history, output_dir):
     plt.savefig(output_dir+'learning_curve_loss'+'.eps', format='eps', dpi=100)
     return
 
+
+
 # output_dir = '/Users/danielmlow/Dropbox/cnn/thesis/runs_cluster/cnn23/'
 # history = np.load(output_dir+'history_dict.npy').item()
+
+def plot_heatmap(output_dir , df_corr, column_names,output_file_name = 'similarity_experiment', with_corr_values=True, value_range=[-1,1], xlabel = 'Training set', ylabel='Testing set'):
+    vmin = value_range[0]
+    vmax = value_range[1]
+    if vmin>-1:
+        ticks = range(vmax)
+    else:
+        ticks = [vmin, vmin / 2., (vmin + vmax) / 2, vmax / 2., vmax]
+    # layer_name is just used to define the output layer name
+    plt.clf()
+    df_corr.columns = column_names
+    df_corr.index = column_names
+    sns.set(font_scale=1.2)
+    sns.heatmap(df_corr,cmap="RdBu_r", vmin = vmin, vmax=vmax , cbar_kws={"ticks":ticks }, annot=with_corr_values)
+    plt.yticks(rotation=0)
+    plt.xticks(rotation=90)
+    plt.tight_layout(1.8)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.savefig(output_dir + 'RSA_ward_'+ output_file_name+ '.eps', format='eps', dpi=100)
 
 

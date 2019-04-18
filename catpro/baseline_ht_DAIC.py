@@ -53,17 +53,14 @@ from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 import feature_generator
 # from process_properties import PreProcessor
-
 import data_handler
 import config
 import data_helpers
 import plot_outputs
 import load_uic
-import data_helpers
 
-importlib.reload(data_handler)
 
-np.random.seed(0)
+
 
 #from template_functions import *
 #from scipy import csr_matrix
@@ -418,20 +415,20 @@ def TrainAndValidate(X_train=None, y_train=None,X_test=None,y_test=None,class_we
     # TODO: add different bl models like regression
     # TODO: add scoring_regression
     '''
-    :param X_train: shape = (N, M)
-    :param y_train:
-    :param X_test:
-    :param y_test:
-    :param class_weight:
-    :param scoring_classification: grid search will return best parameters of first metric.
+    :param X_train: shape = (N, M) 
+    :param y_train: 
+    :param X_test: 
+    :param y_test: 
+    :param class_weight: 
+    :param scoring_classification: grid search will return best parameters of first metric.  
     :param probability: enable probability estimates. Will slow down, but enables confidence estimation.
-    :param Cs:
-    :param norms:
-    :param kernels:
-    :param cv:
-    :param k_audio_features:
-    :param perform_cross_validation:
-    :return:
+    :param Cs: 
+    :param norms: 
+    :param kernels: 
+    :param cv: 
+    :param k_audio_features: 
+    :param perform_cross_validation: 
+    :return: 
     '''
     parameter_sets = []
     for kernel_ in kernels:
@@ -478,8 +475,8 @@ def TrainAndValidate(X_train=None, y_train=None,X_test=None,y_test=None,class_we
         else:
             # perform train-dev split
             logger.info('=======executing train-dev split model')
-
-            X_train, X_dev, y_train, y_dev= train_test_split(X_train, y_train, test_size=0.20, random_state=0,
+            text = dataHandler.loadInputData(type='train').get('input')
+            X_train, X_dev, y_train, y_dev, X_train_text, X_dev_text = train_test_split(X_train, y_train, text[:4974], test_size=0.20, random_state=0,
                                                               shuffle=False)  # TODO: save and add test_size to parameters.
             y_dev = [int(n) for n in y_dev]
             # TODO: shuffle, I think text has some of the test set.
@@ -745,9 +742,7 @@ if __name__ == '__main__':
     importlib.reload(config)
     perform_cross_validation = config.perform_cross_validation
     input_dir = config.input_dir
-    input_file = config.input_file
     output_dir = config.output_dir
-
     # mkdir and log
     path_to_dir = data_helpers.make_output_dir(os.path.join(output_dir))
     handler = logging.FileHandler(os.path.join(path_to_dir, 'self_training.log'))
@@ -769,148 +764,15 @@ if __name__ == '__main__':
     # X_train_text = np.load(os.path.join(input_dir,'X_train_text_groupedby_interview.npy'))
     # X_train_audio = np.load('X_train_audio_groupedby_interview.npy')
     importlib.reload(load_uic)
-    X_train, y_train, groups, cg, pg = load_uic.load(day=[1,2,3,4], response_type=['freeresp', 'sentences'], dataset='train')
+    X, y, groups = load_uic.load(day=[1], response_type=['freeresp'])
+    print(X.shape, y.shape, groups.shape)
 
-    audio_features = pd.read_csv(input_dir+input_file).columns[6:]
-    X_train_normalized = data_helpers.normalize(array_train=X_train)
-    X_train_normalized_kbest, kbest_features_names = data_helpers.f_feature_selection(
-        X=X_train_normalized , y=y_train, k=32, audio_features=audio_features, print_=True)  # 0.5991, 0.48
-    # X_train_audio_normalized_best = data_helpers.f_feature_selection(X=X_train_audio_normalized, y=y_train_audio, k=32, audio_features=audio_features, print_=True) #k=32: 0.5934, 0.4740
-    # X_train_audio_normalized_best = feature_selection_fpr(X=X_train_audio_normalized, y=y_train_audio, alpha=0.01)
-    print(X_train_normalized_kbest.shape)
-
+    X_train, X_test, y_train, y_test = train_test_split(X, y,test_size=0.2)
     # Train and validate
-    # TODO: add ratio to dataframe latex table
-    TrainAndValidate(X_train=X_train_normalized_kbest, y_train=y_train,
-                     perform_cross_validation=perform_cross_validation, kernels=['linear', 'rbf'], Cs=[0.01, 0.1,1,10, 100], cv=5)
-    ratio_pg = round(pg.shape[0]/(cg.shape[0]+pg.shape[0]),2)
-    print('ratio_pg: ', ratio_pg)
-
-
-    # now make pairwise-prediction matrix between best time-point models
-    best_params = {1: ['linear', 1, 0.46],
-                   2: ['rbf', 10, 0.53],
-                   3: ['rbf', 10, 0.49],
-                   4: ['linear', 100, 0.53],
-                   'all': ['rbf', 0.1, 0.51],}
-    # load all time-points as test sets
-    day_data = {}
-    for i in range(1,5):
-        X_train, y_train, groups, cg, pg = load_uic.load(day=[i], response_type=['freeresp', 'sentences'],
-                                                                dataset='train')
-        X_train_normalized = data_helpers.normalize(array_train=X_train)
-        X_train_normalized_kbest, kbest_features_names = data_helpers.f_feature_selection(
-            X=X_train_normalized, y=y_train, k=32, audio_features=audio_features, print_=True)  # 0.5991, 0.48
-        ratio_pg = round(pg.shape[0] / (cg.shape[0] + pg.shape[0]), 2)
-        day_data[i] = [X_train_normalized_kbest, y_train, ratio_pg]
-
-    # run model without cv and test on test set?
-    import itertools
-    combinations_triu = list(itertools.combinations([1, 2, 3, 4], 2))
-    combinations_tril = list(itertools.combinations([4, 3, 2, 1], 2))
-    combinations = combinations_triu+combinations_tril+[(1,1,),(2,2),(3,3),(4,4)]
-    predictions = []
-
-    for pair in combinations:
-        # load first day in pair to train model
-        params = best_params.get(pair[0])
-        X_train, y_train, groups, cg, pg = load_uic.load(day=pair[0], response_type=['sentences'], dataset='train')
-        ratio_pg_train = round(pg.shape[0] / (cg.shape[0] + pg.shape[0]), 2)
-        X_train_normalized = data_helpers.normalize(array_train=X_train)
-        X_train_normalized_kbest, kbest_features_names = data_helpers.f_feature_selection(
-            X=X_train_normalized, y=y_train, k=32, audio_features=audio_features, print_=True)  # TODO: k should be params[2]
-        clf = SVC(C=params[1], kernel=params[0], class_weight='balanced', probability=False, random_state=0)
-        clf.fit(X_train_normalized_kbest, y_train)
-        # bring second day in pair to test
-        X_test = day_data.get(pair[1])[0]
-        y_test = day_data.get(pair[1])[1]
-        ratio_pg_test = day_data.get(pair[1])[2]
-        y_pred = clf.predict(X_test)
-        y_pred = [int(n) for n in y_pred]
-        # For interpretation purposes, we compute the decision confidence (i.e., normalized distance from boundary)
-        # TODO add interpretation.py functions here.
-        f1 = f1_score(y_test, y_pred)
-        # acc = accuracy_score(y_test, y_pred)
-        # print(f1)
-        roc_auc = roc_auc_score(y_test, y_pred)
-        precision = precision_score(y_test, y_pred)
-        recall = recall_score(y_test, y_pred)
-        # print('\n', f1, parameter_set, '\n')
-        support = [ratio_pg_train, ratio_pg_test]
-        scores = [round(f1, 2),
-                  round(roc_auc, 2),
-                  round(precision, 2),
-                  round(recall, 2)]
-        predictions.append([pair,scores, support])
-
-
-    # build pairwise prediction matrix
-    importlib.reload(plot_outputs)
-
-    prediction_matrix = pd.DataFrame(np.zeros((4,4))) #y axis is trained model, x axis is test set
-    metric = 'f1'
-    for i in predictions:
-        if metric == 'roc_auc':
-            prediction_matrix.iloc[i[0][0]-1,i[0][1]-1] = i[1][1] # i[1][1] is roc-auc, i[1][0] is f1
-        elif metric == 'f1':
-            prediction_matrix.iloc[i[0][0]-1,i[0][1]-1] = i[1][0] # i[1][1] is roc-auc, i[1][0] is f1
-    rand = np.random.randint(1000,9999)
-
-    plot_outputs.plot_heatmap(output_dir,prediction_matrix,['Day 1','Day 2','Day 3','Day 4'],'prediction_across_days_'+metric+'_'+str(rand), value_range=[0,1])
-
-    #
-    ratios = [predictions[0][2][0]]
-    for i in predictions[1:4]:
-        ratios.append((i[2][1]))
-
-    support_all_days = pd.DataFrame(ratios, index= ['Day 1','Day 2','Day 3','Day 4'], columns =  ['Patient ratio'])
-
-
-
-
-
-
-
+    TrainAndValidate(X_train=X_train, y_train=y_train,
+                     perform_cross_validation=perform_cross_validation)
     # generateFeatureAndClassification(config_params, perform_cross_validation=perform_cross_validation)
     # TrainAndValidate(X_train=X_train_audio_normalized_best, y_train=y_train_audio,
     #                  perform_cross_validation=perform_cross_validation)
     # generateFeatureAndClassification(config_params, perform_cross_validation=perform_cross_validation)
-
-    # =============================================
-    # # Test
-    # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
-    # audio_features = pd.read_csv(input_dir + input_file).columns[6:]
-    # # Train set
-    # X_train_normalized = data_helpers.normalize(array_train=X_train)
-    # X_train_normalized_kbest, kbest_features_names = data_helpers.f_feature_selection(
-    #     X=X_train_normalized, y=y_train, k=32, audio_features=audio_features, print_=True)  # 0.5991, 0.48
-    # # Test set
-    # X_test_normalized = data_helpers.normalize(array_train=X_test)
-    # X_test_normalized_kbest, kbest_features_names = data_helpers.f_feature_selection(
-    #     X=X_test_normalized, y=y_test, k=32, audio_features=audio_features, print_=True)  # TODO: use same features as train set
-    #
-    # # fit and test
-    # clf = SVC(C=1, kernel='linear', class_weight='balanced', probability=True, random_state=0)
-    # clf.fit(X_train_normalized_kbest, y_train)
-    #
-    # y_pred = clf.predict(X_test_normalized_kbest)
-    # y_pred = [int(n) for n in y_pred]
-    # # For interpretation purposes, we compute the decision confidence (i.e., normalized distance from boundary)
-    # # TODO add interpretation.py functions here.
-    #
-    # f1 = f1_score(y_test, y_pred)
-    # acc = accuracy_score(y_test, y_pred)
-    # print(f1)
-    # roc_auc = roc_auc_score(y_test, y_pred)
-    # precision = precision_score(y_test, y_pred)
-    # recall = recall_score(y_test, y_pred)
-    # # print('\n', f1, parameter_set, '\n')
-    # scores = [round(f1, 2),
-    #           '-',
-    #           round(roc_auc, 2),
-    #           round(precision, 2),
-    #           round(recall, 2),]
-    #           # parameter_set[0],
-    #           # parameter_set[1]]  # the '-' is for f1 std, not available with
-    # # scores_mean_all.append(scores)  # TODO fix name (not "mean" for train-dev split)
 
