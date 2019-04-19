@@ -2,29 +2,23 @@
 
 Clinical Acoustics & Text Processing (CATPro) provides tools for monitoring and predicting mental health disorders using acoustic signal processing and natural language processing.
 
-## Getting Started
+### Installation and getting started
 
 ```
 TODO 
-```
 
-### Requirements
+virtualenv
 
-```
-TODO
-requirements.txt
-
+docker
 
 ```
 
-### Installing
+### Example
 
 
 ```
 TODO
 ```
-
-End with an example of getting some data out of the system or using it for a little demo
 
 
 #### Mozilla speech-to-text
@@ -53,11 +47,6 @@ tar xvfz deepspeech-0.4.1-models.tar.gz
 TODO
 ```
 
-### Break down into end to end tests
-
-```
-Give an example
-```
 
 ## Built With
 
@@ -84,9 +73,10 @@ See also the list of [contributors](https://github.com/your/project/contributors
 * Free software: Apache Software License 2.0
 * Documentation: https://catpro.readthedocs.io.
 
-Repo structure with descriptions:
 
 
+
+## Repo structure with descriptions:
 
 ```
 # TODO: put preprocessing, data_helpers, and models into directories. 
@@ -100,7 +90,7 @@ catpro
                         | -- daic
                         | -- uic
                         | -- banda
-                |-- outputs: dir with outputs of models
+                |-- outputs: dir with outputs of models (in .gitignore) 
                         | -- daic
                         | -- uic
                         | -- banda
@@ -108,11 +98,14 @@ catpro
                 |-- create_dataset_uic.py
                 |-- create_dataset_banda.py
                 |-- config_create_dataset.py: paths
-                |-- fetch_daic.py
-                |-- fetch_uic.py
-                |-- fetch_banda.py
+                |-- load_daic.py
+                |-- load_uic.py
+                |-- load_banda.py
+                |-- util: .txt with NLP dictionaries, etc.
+                |-- credentials: private credentials (in .gitignore)
 
-        # Preprocessing and feature extraction
+
+        # Preprocessing and feature extraction: *wav/text to features*
         |-- config_preprocess.py
         |-- preprocess_speech.py: denoise, trim silence, make segments and return csv to ./datasets/
         |-- extract_speech_features.py 
@@ -123,11 +116,12 @@ catpro
                 |-- depression_ngram_genr.py
                 ...
 
-        # Data helpers
+        # Data helpers: plotting or transforming data (normalization, feature selection) during runs. *Features to input* and *output to plot*
         |-- data_helpers.py
         |-- data_handler.py
         |-- util.py
         |-- interpretation.py: eg, show top feature scores for a given input in a heatmap
+        |-- plot_outputs.py
 
         # Models
         |-- config.py: (in .gitignore) paths and parameters for models below
@@ -141,11 +135,9 @@ catpro
         
 ```
 
-
-
-
-
 ## Datasets
+
+USC DAIC:
 
 - X_train_df.csv:  
         - X_train for text only
@@ -155,32 +147,6 @@ catpro
 - X_train_text_audio.csv:
         - X_train for text and speech.
         - contains the following columns: 'id', 'train_test', 'y_binary', 'y_24', 'gender','start_time', 'stop_time', 'speaker', 'X_train_text', 'X_trian_audio_covarep0', ..., 'X_trian_audio_covarep74', 'X_trian_audio_formant0', ..., 'X_trian_audio_formant4'.  
-
-
-
-
-## Scripts
-### Training/testing models
-- preprocess_data.py
-        
-        - Unzips original dataset and leaves only audio and text files (since vision files are large)
-        
-        - Creates a single data frame with all data: X_train_df_text. 
-
-        - Merges covarep and formant features and outputs covarep_formant_concatenated.csv
-
-        - Averages multiple audio windows (over 10 msec) to match segments of text which have a start and end time (e.g., 26:34-28:16 seconds) and adds it to single data frame: X_train_df.
-
-
-- train_regression.py
-
-        Hello
-
-
-- train_regression.py
-
-        Hello
-
 
 
 ## Acknowledgments
@@ -196,7 +162,7 @@ catpro
 TODO (see commented text)
 -----
 
-
+TODO
 [//]: <> (add this at some point
 .. image:: https://img.shields.io/pypi/v/catpro.svg
         :target: https://pypi.python.org/pypi/catpro
