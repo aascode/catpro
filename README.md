@@ -83,14 +83,14 @@ See also the list of [contributors](https://github.com/your/project/contributors
 # TODO: unify data helpers and preprocessing (into two .py: NLP and speech)
 
 catpro
-|-- ...
+|-- ... (setup, tests, docker)
 |-- catpro
-        |-- data (files & scripts to fetch them)
-                |-- datasets: dir with large files (in .gitignore)
+        |-- data (files & scripts to fetch them) (in .gitignore)
+                |-- datasets: dir with large files 
                         | -- daic
                         | -- uic
                         | -- banda
-                |-- outputs: dir with outputs of models (in .gitignore) 
+                |-- outputs: dir with outputs of models 
                         | -- daic
                         | -- uic
                         | -- banda
@@ -101,9 +101,8 @@ catpro
                 |-- load_daic.py
                 |-- load_uic.py
                 |-- load_banda.py
-                |-- util: .txt with NLP dictionaries, etc.
-                |-- credentials: private credentials (in .gitignore)
-
+                |-- util: txts with NLP dictionaries, etc.
+                |-- credentials: private credentials
 
         # Preprocessing and feature extraction: *wav/text to features*
         |-- config_preprocess.py
@@ -116,14 +115,12 @@ catpro
                 |-- depression_ngram_genr.py
                 ...
 
-        # Data helpers: plotting or transforming data (normalization, feature selection) during runs. *Features to input* and *output to plot*
+        # Data helpers: transforming data (normalization, feature selection) during runs. *Features to input* 
         |-- data_helpers.py
         |-- data_handler.py
         |-- util.py
-        |-- interpretation.py: eg, show top feature scores for a given input in a heatmap
-        |-- plot_outputs.py
 
-        # Models
+        # Models: *input to output*
         |-- config.py: (in .gitignore) paths and parameters for models below
         |-- gss.py: group shuffle split with permutation test
         |-- lstm.py
@@ -131,6 +128,10 @@ catpro
         |-- baseline_ht.py: SVMs for baseline with hyperparameter tuning (e.g., gridsearch, randomsearch)
         |-- baseline_PROJECT_NAME.py: final baseline used for publication with parameters from baseline_ht.py
         |-- gpt2.py
+
+        # Visualization and results: *output to plot*
+        |-- interpretation.py: eg, show top feature scores for a given input in a heatmap
+        |-- plot_outputs.py
 
         
 ```

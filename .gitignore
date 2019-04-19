@@ -8,11 +8,12 @@ catpro/config*
 catpro/data/*
 
 # exception to the rule
+!catpro/data/*.py
 !catpro/data/datasets/.gitkeep 
 !catpro/data/credentials/.gitkeep 
 !catpro/data/outputs/.gitkeep 
 !catpro/data/util/.gitkeep 
-!catpro/data/*.py
+
 
 
 *.sh
