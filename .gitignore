@@ -5,7 +5,10 @@ config*
 catpro/config*
 
 # data
-catpro/data/
+catpro/data/datasets/
+catpro/data/credentials/
+catpro/data/outputs/
+catpro/data/util/
 
 *.sh
 
