@@ -5,17 +5,15 @@ config*
 catpro/config*
 
 # data
-catpro/data/datasets/*
-catpro/data/credentials/*
-catpro/data/outputs/*
-catpro/data/util/*
+catpro/data/*
 
 # exception to the rule
-
 !catpro/data/datasets/.gitkeep 
 !catpro/data/credentials/.gitkeep 
 !catpro/data/outputs/.gitkeep 
 !catpro/data/util/.gitkeep 
+!catpro/data/*.py
+
 
 *.sh
 
