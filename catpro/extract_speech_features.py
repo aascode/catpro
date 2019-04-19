@@ -3,7 +3,6 @@ from python_speech_features import mfcc
 from python_speech_features import logfbank
 import scipy.io as io
 import numpy as np
-
 import data.config_uic as config
 
 import importlib
@@ -29,9 +28,6 @@ np.sum(participants.total_fr)
 # opensmile
 # SMILExtract -C config/MFCC12_E_D_A.conf -I ./../catpro/catpro/data/datasets/banda/556_b.wav -csvoutput output.csv
 # 'bash ./data/datasets/uic/all_subjects/extract_features.sh' does IS13 ComParE.conf
-
-
-
 
 for sample in participants
 df = pd.read_csv(input_dir+'all_subjects/hc_08501_p1_freeresp.csv', sep=';')

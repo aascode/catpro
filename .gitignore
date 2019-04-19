@@ -7,7 +7,7 @@ catpro/config*
 # data
 catpro/data/
 
-
+*.sh
 
 
 *DS_Store*

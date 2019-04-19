@@ -4,30 +4,24 @@ Clinical Acoustics & Text Processing (CATPro) provides tools for monitoring and 
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+```
+TODO 
+```
 
-### Prerequisites
-
-What things you need to install the software and how to install them
+### Requirements
 
 ```
 TODO
+requirements.txt
+
+
 ```
 
 ### Installing
 
-A step by step series of examples that tell you how to get a development env running
-
-Say what the step will be
 
 ```
-Give the example
-```
-
-And repeat
-
-```
-until finished
+TODO
 ```
 
 End with an example of getting some data out of the system or using it for a little demo
@@ -42,40 +36,28 @@ cd HOME_DIR
 virtualenv -p python3 ./deepspeech-venv/
 source ./deepspeech-venv/bin/activate
 pip3 install deepspeech
+brew install sox
 
 # Pretrianed model:
 wget https://github.com/mozilla/DeepSpeech/releases/download/v0.4.1/deepspeech-0.4.1-models.tar.gz
 
 # Run:
-brew install sox
 
-deepspeech --model models/output_graph.pbmm --alphabet models/alphabet.txt --lm models/lm.binary --trie models/trie --audio /Users/danielmlow/Dropbox/catpro/catpro/data/datasets/banda/556_b.wav
+deepspeech --model models/output_graph.pbmm --alphabet models/alphabet.txt --lm models/lm.binary --trie models/trie --audio ./data/datasets/banda/556_b.wav
 tar xvfz deepspeech-0.4.1-models.tar.gz
 ```
 
 ## Running the tests
 
-Explain how to run the automated tests for this system
+```
+TODO
+```
 
 ### Break down into end to end tests
 
-Explain what these tests test and why
-
 ```
 Give an example
 ```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-## Deployment
-
-Add additional notes about how to deploy this on a live system
 
 ## Built With
 
@@ -102,27 +84,59 @@ See also the list of [contributors](https://github.com/your/project/contributors
 * Free software: Apache Software License 2.0
 * Documentation: https://catpro.readthedocs.io.
 
+Repo structure with descriptions:
+
+
 
 ```
+# TODO: put preprocessing, data_helpers, and models into directories. 
+# TODO: unify data helpers and preprocessing (into two .py: NLP and speech)
+
 catpro
 |-- ...
 |-- catpro
         |-- data (files & scripts to fetch them)
-                |--datasets: large csv npy files (in .gitignore)
-                |--outputs: outputs of models
-                        |-- interpretation
-                |--daic.py: preprocess DAIC dataset and return csv to ./datasets/
-                |--preprocess_banda.py: preprocess BANDA dataset and return csv to ./datasets/
-        |-- config.py (in .gitignore)
+                |-- datasets: dir with large files (in .gitignore)
+                        | -- daic
+                        | -- uic
+                        | -- banda
+                |-- outputs: dir with outputs of models
+                        | -- daic
+                        | -- uic
+                        | -- banda
+                |-- create_dataset_daic.py: fix filenames, convert to .wav, put in final directory in ./datasets/
+                |-- create_dataset_uic.py
+                |-- create_dataset_banda.py
+                |-- config_create_dataset.py: paths
+                |-- fetch_daic.py
+                |-- fetch_uic.py
+                |-- fetch_banda.py
+
+        # Preprocessing and feature extraction
+        |-- config_preprocess.py
+        |-- preprocess_speech.py: denoise, trim silence, make segments and return csv to ./datasets/
         |-- extract_speech_features.py 
+        |-- audio_transcribe.py
+        |-- doc2vec.py: create doc2vec vectors for each text segment
+        |-- feature_generator.py: NLP features
+        |-- features: dir with scripts to generate NLP features
+                |-- depression_ngram_genr.py
+                ...
+
+        # Data helpers
+        |-- data_helpers.py
+        |-- data_handler.py
+        |-- util.py
+        |-- interpretation.py: eg, show top feature scores for a given input in a heatmap
+
+        # Models
+        |-- config.py: (in .gitignore) paths and parameters for models below
+        |-- gss.py: group shuffle split with permutation test
         |-- lstm.py
         |-- lstm_ht.py: for hyperparameter tuning
-        |-- baseline_ht.py: SVMs for baseline with hyperparameter tuning (e.g., gridsearch)
-        |-- baseline.py: final baseline used for publication with parameters from baseline_ht.py
-        |-- interpretation.py
-                - show top feature scores for a given input in a heatmap
-        |-- doc2vec.py: create doc2vec vectors for each segment in 
-        |-- gpt2.py: have language model give diagnosis
+        |-- baseline_ht.py: SVMs for baseline with hyperparameter tuning (e.g., gridsearch, randomsearch)
+        |-- baseline_PROJECT_NAME.py: final baseline used for publication with parameters from baseline_ht.py
+        |-- gpt2.py
 
         
 ```
