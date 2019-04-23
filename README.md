@@ -90,24 +90,28 @@ catpro
                         | -- daic
                         | -- uic
                         | -- banda
+                        |-- create_dataset_daic.py: fix filenames, convert to .wav, put in final directory in ./datasets/
+                        |-- create_dataset_uic.py
+                        |-- create_dataset_uic.md TODO: make bash script
+                        |-- create_dataset_banda.py
+                        |-- config_create_dataset.py: paths
+                        |-- load_daic.py
+                        |-- load_uic.py
+                        |-- load_banda.py
                 |-- outputs: dir with outputs of models 
                         | -- daic
                         | -- uic
                         | -- banda
-                |-- create_dataset_daic.py: fix filenames, convert to .wav, put in final directory in ./datasets/
-                |-- create_dataset_uic.py
-                |-- create_dataset_banda.py
-                |-- config_create_dataset.py: paths
-                |-- load_daic.py
-                |-- load_uic.py
-                |-- load_banda.py
                 |-- util: txts with NLP dictionaries, etc.
                 |-- credentials: private credentials
+        
+        # Quality control: visualizations to understand dataset distribution and biases: spectrogram (silences), amount of speakers, heatmap on participant info.
+        |-- quality_control.py
 
         # Preprocessing and feature extraction: *wav/text to features*
         |-- config_preprocess.py
         |-- preprocess_speech.py: denoise, trim silence, make segments and return csv to ./datasets/
-        |-- extract_speech_features.py 
+        |--extract_opensmile.sh: extracts opensmile features TODO move here change paths
         |-- audio_transcribe.py
         |-- doc2vec.py: create doc2vec vectors for each text segment
         |-- feature_generator.py: NLP features

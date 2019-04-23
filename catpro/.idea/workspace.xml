@@ -2,9 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b0dd4291-2e50-454b-8676-d85c70c58f7d" name="Default" comment="">
+      <change afterPath="$PROJECT_DIR$/quality_control.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/daic.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/create_dataset_daic.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/load_data.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/load_uic.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/extract_speech_features.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gss.py" beforeDir="false" afterPath="$PROJECT_DIR$/gss.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -15,34 +20,75 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/baseline_ht_DAIC.py">
+        <entry file="file://$PROJECT_DIR$/preprocess_speech.py">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/gss.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="217">
-              <caret line="771" column="24" selection-start-line="771" selection-start-column="24" selection-end-line="771" selection-end-column="24" />
+            <state relative-caret-position="2355">
+              <caret line="157" column="80" lean-forward="true" selection-start-line="157" selection-start-column="80" selection-end-line="157" selection-end-column="80" />
+              <folding>
+                <element signature="e#160#191#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/data/datasets/uic/preprocess_uic.py">
+        <entry file="file://$PROJECT_DIR$/data/datasets/load_uic.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="243">
-              <caret line="62" selection-start-line="62" selection-end-line="62" />
-              <folding>
-                <element signature="e#0#16#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="462">
+              <caret line="52" column="66" selection-start-line="52" selection-start-column="12" selection-end-line="52" selection-end-column="66" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/data/datasets/create_dataset_uic.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="148">
+              <caret line="70" column="8" selection-start-line="70" selection-start-column="8" selection-end-line="70" selection-end-column="8" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/data/datasets/uic/all_subjects_trimmed/extract_opensmile.sh">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="90">
+              <caret line="6" selection-start-line="6" selection-end-line="6" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/data/datasets/uic/wav2spectrogram.py">
+        <entry file="file://$PROJECT_DIR$/quality_control.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="158">
-              <caret line="25" column="4" selection-start-line="25" selection-start-column="4" selection-end-line="25" selection-end-column="4" />
+            <state relative-caret-position="136">
+              <caret line="90" column="4" selection-start-line="90" selection-start-column="4" selection-end-line="90" selection-end-column="60" />
               <folding>
-                <element signature="e#155#173#0" expanded="true" />
+                <element signature="e#207#239#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../../cnn/composition/rsa.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="268">
+              <caret line="87" column="12" selection-start-line="87" selection-start-column="12" selection-end-line="87" selection-end-column="12" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../../cnn/composition/rsm.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="201">
+              <caret line="40" column="27" selection-start-line="37" selection-start-column="4" selection-end-line="40" selection-end-column="27" />
             </state>
           </provider>
         </entry>
@@ -50,53 +96,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/config.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="165">
-              <caret line="11" column="3" selection-start-line="11" selection-start-column="3" selection-end-line="11" selection-end-column="3" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/lstm_ht.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="230">
-              <caret line="2119" column="8" selection-start-line="2119" selection-start-column="8" selection-end-line="2119" selection-end-column="8" />
-              <folding>
-                <element signature="e#348#357#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/extract_speech_features.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="195">
-              <caret line="13" selection-start-line="13" selection-end-line="13" />
-              <folding>
-                <element signature="e#0#19#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/utils.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="105">
-              <caret line="7" column="19" selection-start-line="7" selection-start-column="19" selection-end-line="7" selection-end-column="19" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/plot_outputs.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="106">
-              <caret line="130" column="14" selection-start-line="130" selection-start-column="14" selection-end-line="130" selection-end-column="14" />
-              <folding>
-                <element signature="e#0#31#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="60">
+              <caret line="4" column="31" selection-start-line="4" selection-start-column="31" selection-end-line="4" selection-end-column="31" />
             </state>
           </provider>
         </entry>
@@ -112,19 +113,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>Scaler</find>
-      <find>[0,1</find>
-      <find>[0,1]</find>
-      <find>balanced</find>
-      <find>scoring</find>
-      <find>best_score</find>
-      <find>gridsearch</find>
-      <find>gridsearch</find>
-      <find>constant</find>
-      <find>heatmap</find>
-      <find>param</find>
-      <find>matrix</find>
-      <find>clf.fit</find>
       <find>round</find>
       <find>['Dat</find>
       <find>results</find>
@@ -138,10 +126,23 @@
       <find>logger.</find>
       <find>response_type</find>
       <find>pvalue</find>
-      <find>latex</find>
       <find>grid_search</find>
       <find>wav</find>
       <find>stft</find>
+      <find>latex</find>
+      <find>opens</find>
+      <find>input_dir</find>
+      <find>iloc</find>
+      <find>load_ui</find>
+      <find>summerize</find>
+      <find>make_verbo</find>
+      <find>MinMaxScaler</find>
+      <find>open</find>
+      <find>df</find>
+      <find>segment</find>
+      <find>scaler</find>
+      <find>MinMax</find>
+      <find>Standar</find>
     </findStrings>
     <replaceStrings>
       <replace>path_to_dir</replace>
@@ -169,6 +170,8 @@
       <replace>clf</replace>
       <replace>grid_search</replace>
       <replace>logger.info</replace>
+      <replace>df_subset</replace>
+      <replace>Robust</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -205,18 +208,25 @@
         <option value="$PROJECT_DIR$/data/preprocess_illinois.py" />
         <option value="$PROJECT_DIR$/data/datasets/uic/extra_trees.py" />
         <option value="$PROJECT_DIR$/config_uic.py" />
-        <option value="$PROJECT_DIR$/config.py" />
         <option value="$PROJECT_DIR$/../../cnn/composition/rsm.py" />
         <option value="$PROJECT_DIR$/extra_lines.py" />
         <option value="$PROJECT_DIR$/baseline_ht.py" />
         <option value="$PROJECT_DIR$/stability_across_time.py" />
         <option value="$PROJECT_DIR$/load_uic.py" />
-        <option value="$PROJECT_DIR$/data/datasets/uic/wav2spectrogram.py" />
         <option value="$PROJECT_DIR$/plot_outputs.py" />
         <option value="$PROJECT_DIR$/extra_trees.py" />
         <option value="$PROJECT_DIR$/lstm_ht.py" />
         <option value="$PROJECT_DIR$/data/datasets/uic/preprocess_uic.py" />
         <option value="$PROJECT_DIR$/extract_speech_features.py" />
+        <option value="$PROJECT_DIR$/data/datasets/uic/wav2spectrogram.py" />
+        <option value="$PROJECT_DIR$/data/create_dataset_uic.py" />
+        <option value="$PROJECT_DIR$/data/datasets/uic/all_subjects_trimmed/extract_opensmile.sh" />
+        <option value="$PROJECT_DIR$/config.py" />
+        <option value="$PROJECT_DIR$/data/datasets/load_uic.py" />
+        <option value="$PROJECT_DIR$/preprocess_speech.py" />
+        <option value="$PROJECT_DIR$/data/datasets/create_dataset_uic.py" />
+        <option value="$PROJECT_DIR$/gss.py" />
+        <option value="$PROJECT_DIR$/quality_control.py" />
       </list>
     </option>
   </component>
@@ -313,7 +323,7 @@
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32852563" />
-      <window_info active="true" anchor="bottom" id="Python Console" order="7" sideWeight="0.49960285" visible="true" weight="0.47916666" />
+      <window_info active="true" anchor="bottom" id="Python Console" order="7" sideWeight="0.49960285" visible="true" weight="0.41346154" />
       <window_info anchor="bottom" id="Version Control" order="8" weight="0.32852563" />
       <window_info anchor="bottom" id="Terminal" order="9" weight="0.32852563" />
       <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.50039715" side_tool="true" weight="0.33814102" />
@@ -324,55 +334,6 @@
     </layout>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/../../keras-gpt-2/keras_gpt_2/model.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="16" column="72" selection-start-line="16" selection-start-column="66" selection-end-line="16" selection-end-column="72" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/keras_gpt_2/gen.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="345">
-          <caret line="23" column="57" selection-start-line="23" selection-start-column="57" selection-end-line="23" selection-end-column="57" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/config_cluster.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="20" column="45" selection-start-line="20" selection-start-column="45" selection-end-line="20" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/run_gpt2.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="8" column="96" selection-start-line="8" selection-start-column="96" selection-end-line="8" selection-end-column="96" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/run_gpt2_no_ellie.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="5" column="11" lean-forward="true" selection-end-line="11" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/mlxtend/evaluate/permutation.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1725">
-          <caret line="117" column="37" selection-start-line="117" selection-start-column="25" selection-end-line="117" selection-end-column="37" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gpt2_phq8.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3045">
-          <caret line="213" selection-start-line="213" selection-end-line="213" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/gpt2.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="165">
@@ -450,16 +411,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/load_data.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="11" column="21" selection-start-line="11" selection-start-column="21" selection-end-line="11" selection-end-column="21" />
-          <folding>
-            <element signature="e#1#15#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/load_data.py" />
     <entry file="file:///Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/speech_recognition/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="13590">
@@ -503,20 +455,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../../cnn/composition/rsm.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="172">
-          <caret line="68" column="27" lean-forward="true" selection-start-line="68" selection-start-column="27" selection-end-line="68" selection-end-column="27" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../cnn/composition/rsa.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="24" selection-start-line="88" selection-start-column="19" selection-end-line="88" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/extra_lines.py" />
     <entry file="file:///Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/sklearn/svm/base.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -525,13 +463,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/config_banda.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="45">
-          <caret line="3" selection-start-line="3" selection-end-line="3" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/config_banda.py" />
     <entry file="file:///Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/sklearn/metrics/classification.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="82">
@@ -539,9 +471,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/stability_across_time.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
+    <entry file="file://$PROJECT_DIR$/stability_across_time.py" />
     <entry file="file://$PROJECT_DIR$/baseline_ht.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="327">
@@ -552,23 +482,32 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/load_uic.py">
+    <entry file="file://$PROJECT_DIR$/load_uic.py" />
+    <entry file="file://$PROJECT_DIR$/extra_trees.py" />
+    <entry file="file://$PROJECT_DIR$/data/audio_transcribe.py" />
+    <entry file="file://$PROJECT_DIR$/data_helpers.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="215">
-          <caret line="45" column="20" selection-start-line="45" selection-start-column="20" selection-end-line="45" selection-end-column="20" />
+        <state relative-caret-position="390">
+          <caret line="35" column="62" selection-start-line="34" selection-start-column="4" selection-end-line="35" selection-end-column="62" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/daic.py" />
+    <entry file="file://$PROJECT_DIR$/data/datasets/uic/preprocess_uic.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="104">
+          <caret line="113" column="26" selection-start-line="113" selection-start-column="26" selection-end-line="113" selection-end-column="26" />
           <folding>
-            <element signature="e#2#18#0" expanded="true" />
+            <element signature="e#0#16#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/plot_outputs.py">
+    <entry file="file://$PROJECT_DIR$/data/datasets/uic/wav2spectrogram.py" />
+    <entry file="file://$PROJECT_DIR$/baseline_ht_DAIC.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="106">
-          <caret line="130" column="14" selection-start-line="130" selection-start-column="14" selection-end-line="130" selection-end-column="14" />
-          <folding>
-            <element signature="e#0#31#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="97">
+          <caret line="763" column="22" selection-start-line="763" selection-start-column="22" selection-end-line="763" selection-end-column="22" />
         </state>
       </provider>
     </entry>
@@ -582,50 +521,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/extra_trees.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="133">
-          <caret line="422" selection-start-line="422" selection-end-line="422" />
-          <folding>
-            <element signature="e#159#190#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/baseline_ht_DAIC.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="217">
-          <caret line="771" column="24" selection-start-line="771" selection-start-column="24" selection-end-line="771" selection-end-column="24" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/config.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="11" column="3" selection-start-line="11" selection-start-column="3" selection-end-line="11" selection-end-column="3" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/data/datasets/uic/preprocess_uic.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="243">
-          <caret line="62" selection-start-line="62" selection-end-line="62" />
-          <folding>
-            <element signature="e#0#16#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/extract_speech_features.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="195">
-          <caret line="13" selection-start-line="13" selection-end-line="13" />
-          <folding>
-            <element signature="e#0#19#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/utils.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="105">
@@ -633,36 +528,79 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/data/audio_transcribe.py">
+    <entry file="file://$PROJECT_DIR$/plot_outputs.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="8" column="20" lean-forward="true" selection-start-line="8" selection-start-column="20" selection-end-line="8" selection-end-column="20" />
+        <state relative-caret-position="106">
+          <caret line="130" column="14" selection-start-line="130" selection-start-column="14" selection-end-line="130" selection-end-column="14" />
           <folding>
-            <element signature="e#23#39#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/data_helpers.py">
+    <entry file="file://$PROJECT_DIR$/data/create_dataset_uic.py" />
+    <entry file="file://$PROJECT_DIR$/extract_speech_features.py" />
+    <entry file="file://$PROJECT_DIR$/config.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="390">
-          <caret line="35" column="62" selection-start-line="34" selection-start-column="4" selection-end-line="35" selection-end-column="62" />
+        <state relative-caret-position="60">
+          <caret line="4" column="31" selection-start-line="4" selection-start-column="31" selection-end-line="4" selection-end-column="31" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/data/daic.py">
+    <entry file="file://$PROJECT_DIR$/data/datasets/uic/all_subjects_trimmed/extract_opensmile.sh">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="17" column="4" lean-forward="true" selection-start-line="17" selection-start-column="4" selection-end-line="17" selection-end-column="4" />
+        <state relative-caret-position="90">
+          <caret line="6" selection-start-line="6" selection-end-line="6" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/data/datasets/uic/wav2spectrogram.py">
+    <entry file="file://$PROJECT_DIR$/../../cnn/composition/rsm.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="158">
-          <caret line="25" column="4" selection-start-line="25" selection-start-column="4" selection-end-line="25" selection-end-column="4" />
+        <state relative-caret-position="201">
+          <caret line="40" column="27" selection-start-line="37" selection-start-column="4" selection-end-line="40" selection-end-column="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../cnn/composition/rsa.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="268">
+          <caret line="87" column="12" selection-start-line="87" selection-start-column="12" selection-end-line="87" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/datasets/create_dataset_uic.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="148">
+          <caret line="70" column="8" selection-start-line="70" selection-start-column="8" selection-end-line="70" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/datasets/load_uic.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="462">
+          <caret line="52" column="66" selection-start-line="52" selection-start-column="12" selection-end-line="52" selection-end-column="66" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/preprocess_speech.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gss.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2355">
+          <caret line="157" column="80" lean-forward="true" selection-start-line="157" selection-start-column="80" selection-end-line="157" selection-end-column="80" />
           <folding>
-            <element signature="e#155#173#0" expanded="true" />
+            <element signature="e#160#191#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/quality_control.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="90" column="4" selection-start-line="90" selection-start-column="4" selection-end-line="90" selection-end-column="60" />
+          <folding>
+            <element signature="e#207#239#0" expanded="true" />
           </folding>
         </state>
       </provider>

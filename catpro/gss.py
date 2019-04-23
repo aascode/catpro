@@ -2,8 +2,9 @@
 # coding: utf-8
 
 # authors:
-# Satra Ghosh (MIT)
 # Daniel M. Low (Harvard, MIT)
+# Satra Ghosh (MIT)
+
 
 
 # get_ipython().run_line_magic('matplotlib', 'inline')
@@ -35,36 +36,39 @@ from sklearn.svm import SVC
 # from sklearn.linear_model import LogisticRegression
 # from scipy.stats.mstats import mode
 
-import load_uic
+from data.datasets import load_uic
 import data_helpers
 import config
 import plot_outputs
 
 np.random.seed(0)
 
-def gss(day=[1],  grid_search = None, response_type=['freeresp','sentences'], dataset='all', grid_search_parameters = None, plot=False, model = 'extra-trees', N=100, scoring = 'f1', cv = 3, remove_constant_columns = False):
-    X, y, groups, cg,pg = load_uic.load(day=day, response_type=response_type, dataset=dataset)
-    make_verbose = False
+def gss(day=[1],  grid_search = None, response_type=['freeresp','sentences'], dataset='all', grid_search_parameters = None, plot=False, model = 'extra-trees', N=100, scoring = 'f1', cv = 3, remove_constant_columns = False, segmented=True, make_verbose = False):
+    X, y, groups, cg,pg = load_uic.load(day=day, response_type=response_type, dataset=dataset, segmented=segmented)
 
 
-
-    if remove_constant_columns:
-        # Remove columns with constant or close to constant values because they will become constant in one of the folds:
-        # X_std = (np.std(X, axis=0) == 0) # where the column has a std == 0 means it's constant
-        # total = np.sum(X_std)
-        min_max_scaler = MinMaxScaler(feature_range=(0,1))  # feature_range=(-1, 1).
-        X = min_max_scaler.fit_transform(X)
-        X = pd.DataFrame(X)
-        X2 = pd.DataFrame(X)
-        j = 0
-        for i in range(X2.shape[1]):
-            if np.sum(X2.iloc[:, i]) < 4:#!/usr/bin/env python
-                X = X.drop([i], axis=1)
-                logger.info(j)
-                j+=1
-
-        X = X.drop([2801], axis=1)
-        X = np.array(X)
+    # if remove_constant_columns:
+    #     # Remove columns with constant or close to constant values because they will become constant in one of the folds:
+    #     # X_std = (np.std(X, axis=0) == 0) # where the column has a std == 0 means it's constant
+    #     # total = np.sum(X_std)
+    #     if segmented:
+    #         remove = 6
+    #     else:
+    #         remove = 4
+    #     # normalizer = MinMaxScaler(feature_range=(0,1))  # feature_range=(-1, 1).
+    #     normalizer = StandardScaler()  # feature_range=(-1, 1).
+    #     X = normalizer.fit_transform(X)
+    #     X = pd.DataFrame(X)
+    #     X2 = pd.DataFrame(X)
+    #     j = 0
+    #     for i in range(X2.shape[1]):
+    #         if np.sum(X2.iloc[:, i]) < remove:
+    #             X = X.drop([i], axis=1)
+    #             logger.info(j)
+    #             j+=1
+    #
+    #     X = X.drop([2801], axis=1)
+    #     X = np.array(X)
     logger.info('features: '+ str(X.shape[1]))
     # TODO: return most important audio features, (see baseline_ht.py)
     # audio_features = pd.read_csv(input_dir+input_file).columns[6:]
@@ -350,14 +354,12 @@ if __name__ == '__main__':
     all_results_extra_trees = []
     all_results_svm = []
 
-    days = [1, 2, 3, 4]
-    response_type = ['sentences'] #TODO: careful ['freeresp', 'sentences'] in that order. change in loud_uic to make flexible
-    model = 'svm'  # extra-trees, svm
+    segmented = False
+    days = [1,2,3,4] #[1, 2, 3, 4]
+    response_type = ['freeresp'] #TODO: careful ['freeresp', 'sentences'] in that order. change in loud_uic to make flexible
+    model = 'extra-trees'  # extra-trees, svm
+    remove_constant_columns = True# CAREFUL when set to True, eliminates cols
     # svm
-    if model == 'svm':
-        remove_constant_columns = True  # CAREFUL when set to True, eliminates cols
-    else:
-        remove_constant_columns = False # CAREFUL when set to True, eliminates cols
     grid_search = False
     cv = 3
     scoring = 'f1'
@@ -369,13 +371,14 @@ if __name__ == '__main__':
     round_pvalue = 2 #TODO: change to 4 once they improve
     provide_parameters = False
     summerize = False
+    make_verbose = True
 
     # For days 1 through 5 or a subset:
     results = pd.DataFrame(columns=['F1', 'ROC-AUC', 'Precision', 'Recall'], index=['Day 1', 'Day 2', 'Day 3', 'Day 4'])
-    logger.info('Model ' + model + str(response_type)+'====================================================================================\n\n')
+    logger.info('\n\nModel ' + model + str(response_type)+'==========================\n\n')
     for i in days:
 
-        logger.info('Day '+str(i)+'======================================================================================\n\n')
+        logger.info('\n\nDay '+str(i)+'======================================================================================\n\n')
 
         if grid_search:
             params = None
@@ -389,7 +392,7 @@ if __name__ == '__main__':
             params = best_params.get(i)
         # main 
         best_training_scores, scores, median_scores, permutation_scores, median_permutation_scores, pvalues = gss(model=model, grid_search= grid_search, day=[i],response_type=response_type,
-                                                                                                   dataset='all', grid_search_parameters =params, N=N, scoring = scoring, cv = cv, remove_constant_columns = remove_constant_columns)
+                                                                                                   dataset='all', grid_search_parameters =params, N=N, scoring = scoring, cv = cv, remove_constant_columns = remove_constant_columns, segmented=segmented, make_verbose=make_verbose)
         # summerize results for one day:
         # logger.info('\nFinal results: ============================================================================')
         # logger.info('median ROC AUC score (pvalue) and permutation median: ', np.round(median_scores[0],round), np.round(median_permutation_scores[0],round), np.round(pvalues[0],4))
